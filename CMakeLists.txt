@@ -5,6 +5,7 @@ project(cstack)
 include(ExternalProject)
 include(cmake/gtest.cmake)
 include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${GMOCK_INCLUDE_DIRS})
 
 # compilation flags
 set(COMMON_FLAGS "-Wall -Wextra -Wformat -Wformat-security -Werror")
@@ -17,5 +18,11 @@ add_library(cstack STATIC cstack.c)
 # build test
 enable_testing()
 add_executable(cstack_test test.cpp)
-target_link_libraries(cstack_test cstack ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
+target_link_libraries(cstack_test
+    cstack
+    ${GTEST_LIBRARY}
+    ${GTEST_MAIN_LIBRARY}
+    ${GMOCK_LIBRARY}
+    ${GMOCK_MAIN_LIBRARY}
+)
 add_test(NAME cstack_test COMMAND cstack_test)
