@@ -47,7 +47,7 @@ struct ModifyTests : ::testing::Test
     void SetUp()
     {
         stack = stack_new();
-        ASSERT_NE(stack, nullptr);
+        ASSERT_EQ(stack, nullptr);
     }
     void TearDown()
     {
