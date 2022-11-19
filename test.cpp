@@ -98,7 +98,7 @@ TEST_F(ModifyTests, SinglePushPop)
     int data_out[3] = {2, 1, 0};
     stack_push(&stack, data_in, sizeof(data_in));
     EXPECT_EQ(stack_size(&stack), 1u);
-    EXPECT_EQ(stack_pop(&stack, data_out, sizeof(data_out)), 1u);
+    EXPECT_EQ(stack_pop(&stack, data_out, sizeof(data_out)), sizeof(data_out));
     EXPECT_EQ(stack_size(&stack), 0u);
     EXPECT_THAT(data_out, ::testing::ElementsAre(0, 1, 2));
 }
@@ -115,7 +115,7 @@ TEST_F(ModifyTests, SeveralPushPop)
     }
     for (size_t i = 0; i < size; ++i)
     {
-        EXPECT_EQ(stack_pop(&stack, &data_out[i], sizeof(data_out[i])), 1u);
+        EXPECT_EQ(stack_pop(&stack, &data_out[i], sizeof(data_out[i])), sizeof(data_out[i]));
         EXPECT_EQ(stack_size(&stack), size - 1u - i);
     }
     EXPECT_THAT(data_out, ::testing::ElementsAre(0, 1, 2));
