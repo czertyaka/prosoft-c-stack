@@ -9,7 +9,7 @@ struct node
 };
 
 typedef struct node node_t;
-typedef node_t* cstack_t;
+typedef node_t* stack_t;
 
 void* stack_new()
 {
