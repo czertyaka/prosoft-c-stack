@@ -3,9 +3,9 @@
 
 struct node
 {
-    void* data;
-    const unsigned int size;
     struct node* next;
+    const unsigned int size;
+    void* data;
 };
 
 typedef struct node node_t;
