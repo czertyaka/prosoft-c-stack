@@ -4,7 +4,7 @@
 struct node
 {
     struct node* prev;
-    const unsigned int size;
+    unsigned int size;
     void* data;
 };
 
