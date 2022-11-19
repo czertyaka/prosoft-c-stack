@@ -1,23 +1,33 @@
 #include "cstack.h"
 #include <stddef.h>
 
-cstack_t* stack_new()
+struct node
+{
+    struct node* next;
+    const unsigned int size;
+    void* data;
+};
+
+typedef struct node node_t;
+typedef node_t* cstack_t;
+
+void* stack_new()
 {
     return NULL;
 }
 
-void stack_free(cstack_t*)
+void stack_free(void*)
 {}
 
-unsigned int stack_size(cstack_t*)
+unsigned int stack_size(void*)
 {
     return 0;
 }
 
-void stack_push(cstack_t*, const void*, const unsigned int)
+void stack_push(void*, const void*, const unsigned int)
 {}
 
-unsigned int stack_pop(cstack_t*, void*, const unsigned int)
+unsigned int stack_pop(void*, void*, const unsigned int)
 {
     return 0;
 }
