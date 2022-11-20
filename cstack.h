@@ -3,7 +3,7 @@
 
 struct node
 {
-    struct node* prev;
+    const struct node* prev;
     unsigned int size;
     void* data;
 };
