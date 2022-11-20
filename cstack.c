@@ -3,16 +3,6 @@
 
 #define UNUSED(VAR) (void)(VAR)
 
-struct node
-{
-    const struct node* prev;
-    unsigned int size;
-    char data[0];
-};
-
-typedef struct node node_t;
-typedef const node_t* stack_t;
-
 hstack_t stack_new()
 {
     return -1;
