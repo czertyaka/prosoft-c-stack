@@ -23,7 +23,7 @@ TEST(AllocationTests, SingleAllocation)
     EXPECT_EQ(stack_valid_handler(stack), 0);
     EXPECT_EQ(stack_size(stack), 0u);
     stack_free(stack);
-    EXPECT_EQ(stack_valid_handler(stack), -1);
+    EXPECT_EQ(stack_valid_handler(stack), 1);
 }
 
 TEST(AllocationTests, SeveralAllocations)
@@ -39,7 +39,7 @@ TEST(AllocationTests, SeveralAllocations)
     for (size_t i = 0; i < count; ++i)
     {
         stack_free(stacks[i]);
-        EXPECT_EQ(stack_valid_handler(stacks[i]), -1);
+        EXPECT_EQ(stack_valid_handler(stacks[i]), 1);
     }
 }
 
@@ -73,13 +73,14 @@ TEST_F(ModifyTests, PushBadArgs)
 
 TEST_F(ModifyTests, PopBadArgs)
 {
-    const int data_in[5] = {1};
+    const size_t size = 5;
+    const int data_in[size] = {1};
     stack_push(stack, &data_in, sizeof(data_in));
     ASSERT_EQ(stack_size(stack), 1u);
 
     EXPECT_EQ(stack_pop(stack, nullptr, 0u), 0u);
 
-    int data_out[sizeof(data_in) - 1] = {0};
+    int data_out[size - 1] = {0};
     EXPECT_EQ(stack_pop(stack, data_out, sizeof(data_out)), 0u);
     EXPECT_THAT(data_out, ::testing::Each(0));
 
@@ -109,17 +110,17 @@ TEST_F(ModifyTests, SeveralPushPop)
 {
     const size_t size = 3;
     const int data_in[size] = {0, 1, 2};
-    int data_out[size] = {2, 1, 0};
+    int data_out[size] = {0, 1, 2};
     for (size_t i = 0; i < size; ++i)
     {
         stack_push(stack, &data_in[i], sizeof(data_in[i]));
-        EXPECT_EQ(stack_size(stack), i);
+        EXPECT_EQ(stack_size(stack), i + 1u);
     }
     for (size_t i = 0; i < size; ++i)
     {
         EXPECT_EQ(stack_pop(stack, &data_out[i], sizeof(data_out[i])), sizeof(data_out[i]));
         EXPECT_EQ(stack_size(stack), size - 1u - i);
     }
-    EXPECT_THAT(data_out, ::testing::ElementsAre(0, 1, 2));
+    EXPECT_THAT(data_out, ::testing::ElementsAre(2, 1, 0));
 }
 
