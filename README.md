@@ -5,14 +5,14 @@ Class project for C-language lessons, Prosoft Developer School 2022
 Проект предназначен для тривиальной реализации структуры данных [стек](https://neerc.ifmo.ru/wiki/index.php?title=%D0%A1%D1%82%D0%B5%D0%BA) в учебных
 целях.
 
-В проект включена статическая библиотека `cstack` (файлы `cstack.h` и `cstack.c`), написанная на C и реализующая структуру данных, и исполняемый файл
-для ее тестирования (`cstack_test.cpp`), реализованный на C++. Процесс сборки проекта описан в `CMakeLists.txt`, в `cmake/gtest.cmake` вынесена часть
-скрипта `cmake`, отвечающая за включение в наш проект [Google Test](https://github.com/google/googletest).
+В проект включена статическая библиотека `cstack` (файлы [cstack.h](https://github.com/czertyaka/prosoft-c-stack/blob/master/cstack.h) и
+[cstack.c](https://github.com/czertyaka/prosoft-c-stack/blob/master/cstack.c)), написанная на C и реализующая структуру данных, и исполняемый файл
+для ее тестирования ([test.cpp](https://github.com/czertyaka/prosoft-c-stack/blob/master/test.cpp)), реализованный на C++. Процесс сборки проекта
+описан в `CMakeLists.txt`, в `cmake/gtest.cmake` вынесена часть скрипта `cmake`, отвечающая за включение в наш проект фреймворк для тестирования
+[Google Test](https://github.com/google/googletest).
 
 ## Зависимости
-`gcc` - компилятор C
-
-`g++` - компилятор C++
+`gcc >= 6.1` или `clang >= 6.0.0` - компиляторы C/С++
 
 `cmake >= 3.5` - генератор скриптов сборки make/Ninja/etc
 
