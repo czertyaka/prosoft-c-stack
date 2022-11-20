@@ -5,7 +5,7 @@ struct node
 {
     const struct node* prev;
     unsigned int size;
-    void* data;
+    char data[0];
 };
 
 typedef struct node node_t;
