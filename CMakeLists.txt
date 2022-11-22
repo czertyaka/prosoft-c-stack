@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(cstack)
 
 # clone & build Google Test
-include(ExternalProject)
 include(cmake/gtest.cmake)
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${GMOCK_INCLUDE_DIRS})
