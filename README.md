@@ -11,6 +11,8 @@ Class project for C-language lessons, Prosoft Developer School 2022
 описан в `CMakeLists.txt`, в `cmake/gtest.cmake` вынесена часть скрипта `cmake`, отвечающая за включение в наш проект фреймворк для тестирования
 [Google Test](https://github.com/google/googletest).
 
+Подробнее на [wiki](https://github.com/czertyaka/prosoft-c-stack/wiki).
+
 ## Зависимости
 `gcc >= 6.1` или `clang >= 6.0.0` - компиляторы C/С++
 
