@@ -30,7 +30,6 @@ hstack_t stack_new()
 {
     if (g_table.entries == NULL)
         g_table.entries = malloc(sizeof(g_table.entries));
-    node_t* top = malloc(sizeof(top));
     int handler = -1;
     for (int i = 0; i < g_table.size; i++) 
     {
@@ -39,9 +38,8 @@ hstack_t stack_new()
     }
     if (handler == -1)
         handler = g_table.size;
-    g_table.entries[handler].top_stack = top;
+    g_table.entries[handler].top_stack = NULL;
     g_table.entries[handler].reserved = 1;
-    g_table.entries[handler].top_stack->prev = NULL;
     g_table.size += 1;
     return handler;
 }
@@ -76,7 +74,7 @@ unsigned int stack_size(const hstack_t hstack)
     while(ptr != NULL) 
     {
         size += 1;
-        ptr = g_table.entries[hstack].top_stack->prev;
+        ptr = ptr->prev;
     }
     return size;
 }
