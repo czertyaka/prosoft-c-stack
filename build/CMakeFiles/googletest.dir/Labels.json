@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/googletest"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/b300f358729afaaf90f176f69c776afe/googletest.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/be8155cafab42b80f4357a6eb9c5b4b3/googletest-complete.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-build.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-configure.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-download.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-install.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-patch.rule"
+		},
+		{
+			"file" : "C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/f69383191103f2c40a0abc8b687343bf/googletest-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"googletest"
+		],
+		"name" : "googletest"
+	}
+}

@@ -1,0 +1,6 @@
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/googletest.dir
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/cstack.dir
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/cstack_test.dir
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/user/Desktop/prosoft-c-stack/build/CMakeFiles/ZERO_CHECK.dir
