@@ -65,6 +65,16 @@ hstack_t stack_new()
     return result;
 }
 
+void free_table_if_not_needed()
+{
+    if (g_table.count == g_table.free_count)
+    {
+        free(g_table.entries);
+        g_table.entries = NULL;
+        g_table.count = g_table.free_count = 0;
+    }
+}
+
 void stack_free(const hstack_t hstack)
 {
     if (stack_valid_handler(hstack))
@@ -77,6 +87,8 @@ void stack_free(const hstack_t hstack)
     if (end == NULL)
     {
         g_table.entries[hstack].bIsReserved = false;
+        ++g_table.free_count;
+        free_table_if_not_needed();
         return;
     }
 
@@ -91,12 +103,7 @@ void stack_free(const hstack_t hstack)
     g_table.entries[hstack].stack = NULL;
 
     ++g_table.free_count;
-    if (g_table.count == g_table.free_count)
-    {
-        free(g_table.entries);
-        g_table.entries = NULL;
-        g_table.count = g_table.free_count = 0;
-    }
+    free_table_if_not_needed();
 }
 
 int stack_valid_handler(const hstack_t hstack)
