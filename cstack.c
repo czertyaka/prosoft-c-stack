@@ -1,48 +1,49 @@
 #include "cstack.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
 #include <assert.h>
+#include <stdbool.h>
 
-struct node
+typedef struct node
 {
     const struct node* prev;
     unsigned int size;
     char data[0];
-};
-typedef struct node node_t;
+} node_t;
 #define SIZE_OF_NODE (sizeof(void*) + sizeof(unsigned int))
 
-struct stack_entry
+typedef struct stack_entry
 {
-    char bIsReserved;
+    bool bIsReserved;
     node_t* stack;
-};
-typedef struct stack_entry stack_entry_t;
+} stack_entry_t;
 
 struct stack_entries_table
 {
     unsigned int count;
+    unsigned int free_count;
     stack_entry_t* entries;
 };
 
-struct stack_entries_table g_table = { 0u, NULL };
+struct stack_entries_table g_table = { 0u, 0u, NULL };
 
 #define ADDED_STACK_ENTRIES 4
 
 hstack_t stack_new()
 {
-    for (int i = 0; i < g_table.count; ++i)
+    if (g_table.free_count != 0)
     {
-        if (!g_table.entries[i].bIsReserved)
+        for (int i = 0; i < g_table.count; ++i)
         {
-            g_table.entries[i].bIsReserved = 1;
-            return i;
+            if (!g_table.entries[i].bIsReserved)
+            {
+                g_table.entries[i].bIsReserved = true;
+                return i;
+            }
         }
     }
-
     // no free stack handlers
-    unsigned int result = g_table.count;
+    const unsigned int result = g_table.count;
     const auto array_size = (g_table.count + ADDED_STACK_ENTRIES) * sizeof(stack_entry_t);
     stack_entry_t* entries_array = malloc(array_size);
     if (entries_array == NULL)
@@ -58,8 +59,9 @@ hstack_t stack_new()
     }
     g_table.entries = entries_array;
     g_table.count += ADDED_STACK_ENTRIES;
+    g_table.free_count += ADDED_STACK_ENTRIES - 1;
 
-    g_table.entries[result].bIsReserved = 1;
+    g_table.entries[result].bIsReserved = true;
     return result;
 }
 
@@ -74,29 +76,33 @@ void stack_free(const hstack_t hstack)
     node_t* end = g_table.entries[hstack].stack;
     if (end == NULL)
     {
-        g_table.entries[hstack].bIsReserved = 0;
+        g_table.entries[hstack].bIsReserved = false;
         return;
     }
+
     while (end->prev)
     {
-        end = end->prev;
+        node_t* current = end->prev;
+        free(end);
+        end = current;
     }
     free(end);
-    g_table.entries[hstack].bIsReserved = 0;
+    g_table.entries[hstack].bIsReserved = false;
     g_table.entries[hstack].stack = NULL;
 
-    --g_table.count;
-    if (g_table.count == 0)
+    ++g_table.free_count;
+    if (g_table.count == g_table.free_count)
     {
         free(g_table.entries);
         g_table.entries = NULL;
+        g_table.count = g_table.free_count = 0;
     }
 }
 
 int stack_valid_handler(const hstack_t hstack)
 {
     //0 - stack exist, 1 - not exist
-    return hstack < 0 || hstack >= g_table.count || g_table.entries[hstack].bIsReserved == 0;
+    return hstack < 0 || hstack >= g_table.count || g_table.entries[hstack].bIsReserved == false;
 }
 
 unsigned int stack_size(const hstack_t hstack)
