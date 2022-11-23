@@ -5,33 +5,18 @@
 
 #define UNUSED(VAR) (void)(VAR)
 
-struct node
+typedef struct node
 {
-    const struct node* prev;
+    struct node* prev;
     unsigned int size;
-    char data[0];
-}; 
+    const void* data[0];
+}node_t; 
 
-
-typedef struct node node_t;
-
-struct stack 
+typedef struct stack_entry
 {
-    hstack_t hstack;
-    node_t* top;
-};
-
-typedef struct stack stack_t;
-
-
-struct stack_entry
-{
-    int reserved;// bool
-    stack_t* stack;
-};
-
-typedef struct stack_entry stack_entry_t;
-
+    int reserved;
+    node_t* top_stack;
+}stack_entry_t;
 
 struct stack_entries_table
 {
@@ -43,69 +28,87 @@ struct stack_entries_table g_table = {0u, NULL};
 
 hstack_t stack_new()
 {
-    g_table.entries = malloc(sizeof(g_table.entries));
+    if (g_table.entries == NULL)
+        g_table.entries = malloc(sizeof(g_table.entries));
     node_t* top = malloc(sizeof(top));
-    g_table.entries[g_table.size].stack.hstack = g_table.size;
-    g_table.entries[g_table.size].stack.top = top;
-    g_table.entries[g_table.size].reserved = sizeof(stack_t);
-    g_table.entries[g_table.size].stack.top->prev = NULL;
+    int handler = -1;
+    for (int i = 0; i < g_table.size; i++) 
+    {
+        if (g_table.entries[i].reserved == 0)
+            handler = i;
+    }
+    if (handler == -1)
+        handler = g_table.size;
+    g_table.entries[handler].top_stack = top;
+    g_table.entries[handler].reserved = 1;
+    g_table.entries[handler].top_stack->prev = NULL;
     g_table.size += 1;
-    return g_table.entries[g_table.size - 1].stack.hstack;
+    return handler;
 }
 
 void stack_free(const hstack_t hstack)
 {
+    if (stack_valid_handler(hstack) == 1)
+        return;
+    g_table.entries[hstack].reserved = 0;
+    node_t* ptr = g_table.entries[hstack].top_stack;
+    while(ptr != NULL) 
+    {
+        g_table.entries[hstack].top_stack->prev = g_table.entries[hstack].top_stack;
+        free(g_table.entries[hstack].top_stack);
+    }
     UNUSED(hstack);
 }
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    for (int i = 0; i < g_table.size; i++) 
-    {
-        if (g_table.entries[i].stack.hstack == hstack)
-            return 0;
-    }
-    return 1;
+    return hstack < g_table.size && g_table.entries[hstack].reserved == 1 ? 0 : 1;
 }
 
 unsigned int stack_size(const hstack_t hstack)
 {
-    node_t* ptr = g_table.entries[hstack].stack.top;
+    if (stack_valid_handler(hstack) == 1)
+        return 0;
+    node_t* ptr = g_table.entries[hstack].top_stack;
     int size = 0;
+    if (g_table.entries[hstack].top_stack->data == NULL)
+        return 0;
     while(ptr != NULL) 
     {
         size += 1;
-        g_table.entries[hstack].stack.top = g_table.entries[hstack].stack.top->prev;
-        ptr = g_table.entries[hstack].stack.top->prev;
+        ptr = g_table.entries[hstack].top_stack->prev;
     }
     return size;
 }
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
+    if (stack_valid_handler(hstack) == 1)
+        return;
     if (data_in == NULL) return;
-    node_t* ptr = g_table.entries[hstack].stack.top;
-    g_table.entries[hstack].stack.top = malloc(sizeof(node_t));// 
-    g_table.entries[hstack].stack.top->prev = ptr;
-    g_table.entries[hstack].stack.top->data[0] = data_in;// указатель на первый байт 
-    g_table.entries[hstack].stack.top->size = sizeof(data_in) + sizeof(g_table.entries[hstack].stack.top->prev) 
-    + g_table.entries[hstack].stack.top->size;
+    node_t* ptr = g_table.entries[hstack].top_stack;
+    g_table.entries[hstack].top_stack = malloc(sizeof(node_t));
+    g_table.entries[hstack].top_stack->prev = ptr;
+    g_table.entries[hstack].top_stack->data[0] = data_in;// указатель на первый байт 
+    g_table.entries[hstack].top_stack->size = sizeof(data_in) + sizeof(g_table.entries[hstack].top_stack->prev) 
+    + g_table.entries[hstack].top_stack->size;
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    if (size >= sizeof(g_table.entries[hstack].stack.top->data))
-        data_out = g_table.entries[hstack].stack.top->data;
-    else for (int i = 0; i < sizeof(g_table.entries[hstack].stack.top->data); i++) 
+    if (stack_valid_handler(hstack) == 1)
+        return 0;
+    if (size >= sizeof(g_table.entries[hstack].top_stack->data))
+        data_out = g_table.entries[hstack].top_stack->data;
+    else for (int i = 0; i < sizeof(g_table.entries[hstack].top_stack->data); i++) 
     {
        // data_out[i] = g_table.entries[hstack].stack.top->data[i];
     }
-    node_t* ptr = g_table.entries[hstack].stack.top;
+    node_t* ptr = g_table.entries[hstack].top_stack;
     while(ptr != NULL) 
     {
-        g_table.entries[hstack].stack.top = g_table.entries[hstack].stack.top->prev;
-        ptr = g_table.entries[hstack].stack.top->prev;
+        g_table.entries[hstack].top_stack = g_table.entries[hstack].top_stack->prev;
+        ptr = g_table.entries[hstack].top_stack->prev;
     }
     return sizeof(data_out);
 }
-
