@@ -1,7 +1,6 @@
 #include "cstack.h"
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <stdbool.h>
 
 typedef struct node
@@ -10,7 +9,6 @@ typedef struct node
     unsigned int size;
     char data[0];
 } node_t;
-#define SIZE_OF_NODE (sizeof(void*) + sizeof(unsigned int))
 
 typedef struct stack_entry
 {
@@ -29,27 +27,31 @@ struct stack_entries_table g_table = { 0u, 0u, NULL };
 
 #define ADDED_STACK_ENTRIES 4
 
+#define CHECK_AFTER_ALLOC(ptr, return_value) if(ptr == NULL) \
+                                             { \
+                                                 return return_value; \
+                                             } \
+
 hstack_t stack_new()
 {
     if (g_table.free_count != 0)
     {
-        for (int i = 0; i < g_table.count; ++i)
+        for (unsigned int i = 0; i < g_table.count; ++i)
         {
             if (!g_table.entries[i].bIsReserved)
             {
                 g_table.entries[i].bIsReserved = true;
+                --g_table.free_count;
                 return i;
             }
         }
     }
     // no free stack handlers
     const unsigned int result = g_table.count;
-    const auto array_size = (g_table.count + ADDED_STACK_ENTRIES) * sizeof(stack_entry_t);
-    stack_entry_t* entries_array = malloc(array_size);
-    if (entries_array == NULL)
-    {
-        return -1;
-    }
+    const int array_size = (g_table.count + ADDED_STACK_ENTRIES) * sizeof(stack_entry_t);
+    stack_entry_t* const entries_array = malloc(array_size);
+    CHECK_AFTER_ALLOC(entries_array, -1);
+
     memset(entries_array, 0, array_size);
 
     if (g_table.entries)
@@ -79,11 +81,10 @@ void stack_free(const hstack_t hstack)
 {
     if (stack_valid_handler(hstack))
     {
-        assert("Invalid stack handler!");
         return;
     }
 
-    node_t* end = g_table.entries[hstack].stack;
+    const node_t* end = g_table.entries[hstack].stack;
     if (end == NULL)
     {
         g_table.entries[hstack].bIsReserved = false;
@@ -94,11 +95,11 @@ void stack_free(const hstack_t hstack)
 
     while (end->prev)
     {
-        node_t* current = end->prev;
-        free(end);
+        const node_t* const current = end->prev;
+        free((node_t*)end);
         end = current;
     }
-    free(end);
+    free((node_t*)end);
     g_table.entries[hstack].bIsReserved = false;
     g_table.entries[hstack].stack = NULL;
 
@@ -109,25 +110,19 @@ void stack_free(const hstack_t hstack)
 int stack_valid_handler(const hstack_t hstack)
 {
     //0 - stack exist, 1 - not exist
-    return hstack < 0 || hstack >= g_table.count || g_table.entries[hstack].bIsReserved == false;
+    return hstack < 0 || (unsigned int)hstack >= g_table.count || g_table.entries[hstack].bIsReserved == false;
 }
 
 unsigned int stack_size(const hstack_t hstack)
 {
     if (stack_valid_handler(hstack))
     {
-        assert("Invalid stack handler!");
         return 0;
     }
 
-    node_t* end = g_table.entries[hstack].stack;
-    if (end == NULL)
-    {
-        return 0;
-    }
-
-    unsigned int count = 1;
-    while (end->prev)
+    const node_t* end = g_table.entries[hstack].stack;
+    unsigned int count = 0;
+    while (end)
     {
         ++count;
         end = end->prev;
@@ -139,15 +134,12 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 {
     if (stack_valid_handler(hstack) || data_in == NULL || size == 0)
     {
-        assert("Invalid stack handler!");
         return;
     }
 
-    node_t* elem = malloc(size + SIZE_OF_NODE);
-    if (elem == NULL)
-    {
-        return;
-    }
+    node_t* elem = malloc(size + sizeof(node_t));
+    CHECK_AFTER_ALLOC(elem, );
+
     elem->size = size;
     memcpy(elem->data, data_in, size);
 
@@ -158,18 +150,19 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    if (stack_valid_handler(hstack) || data_out == NULL || size == 0
+    if (stack_valid_handler(hstack)
+        || data_out == NULL
+        || size == 0
         || g_table.entries[hstack].stack == NULL
         || g_table.entries[hstack].stack->size > size)
     {
-        assert("Invalid stack handler!");
         return 0;
     }
-    node_t* data = g_table.entries[hstack].stack;
-    g_table.entries[hstack].stack = data->prev;
+    const node_t* const data = g_table.entries[hstack].stack;
+    g_table.entries[hstack].stack = (node_t*)data->prev;
 
     memcpy(data_out, data->data, data->size);
-    const auto result = data->size;
-    free(data);
+    const int result = data->size;
+    free((node_t*)data);
     return result;
 }
