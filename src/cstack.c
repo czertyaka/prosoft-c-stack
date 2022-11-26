@@ -91,7 +91,7 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 {
     if (stack_valid_handler(hstack) == 1)
         return;
-    if (data_in == NULL) return;
+    if (data_in == NULL || size == 0u) return;
 
     node_t* ptr_top = g_table.entries[hstack].top_stack;
     node_t* ptr_new_top = (node_t*)malloc(sizeof(node_t) + sizeof(ptr_top->data));
@@ -105,7 +105,7 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    if (stack_valid_handler(hstack) == 1 || data_out == NULL)
+    if (stack_valid_handler(hstack) == 1 || data_out == NULL || g_table.entries[hstack].top_stack == NULL)
         return 0u;
 
     unsigned int size_data_out = 0u;
@@ -118,14 +118,12 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
     size_data_out = size;
     data_out = (void*)ptr_top->data;
 
+    const node_t* ptr_new_top;
     if (ptr_top->prev != NULL) 
-    {
-        node_t new_top = *ptr_top->prev;
-        g_table.entries->top_stack = &
-        new_top;
-    }
-
+        ptr_new_top = ptr_top->prev;
+    else ptr_new_top = NULL;
+ 
     free((void*)ptr_top);
-    ptr_top = NULL;
+    g_table.entries->top_stack = (node_t*)ptr_new_top;
     return size_data_out;
 }
