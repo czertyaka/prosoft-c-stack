@@ -3,10 +3,41 @@
 
 #define UNUSED(VAR) (void)(VAR)
 
+struct node
+{
+    const struct node* prev;
+    unsigned int size;
+    char data[0];
+};
+
+struct stack_entry
+{
+    int reserved;
+    stack_t stack;
+};
+
+typedef struct stack_entry stack_entry_t;
+
+struct stack_entries_table
+{
+    unsigned int size;
+    stack_entry_t* entries;
+};
+
+struct stack_entries_table g_table = {0u, NULL};
+
+struct node* front_node [5];
+
+
+
 hstack_t stack_new()
 {
+    
     return -1;
 }
+
+
+//////////////////
 
 void stack_free(const hstack_t hstack)
 {
