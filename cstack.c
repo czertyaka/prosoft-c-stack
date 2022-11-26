@@ -26,13 +26,12 @@ struct stack_entries_table
 
 struct stack_entries_table g_table = {0u, NULL};
 
-int stacks_count = 0;     //number of existings stacks
-struct node* p_top_nodes[stacks_count]; //array pointers to top nodes of stacks
+struct node** p_top_nodes; 
 
 hstack_t stack_new()
 {
     hstack_t handler = -1;
-
+    
     for (int i = 0; i < stacks_count; i++){ // search for empty space
         if (p_top_nodes[i] == NULL) {
             p_top_nodes[i] = malloc(sizeof(struct{}*));
@@ -43,7 +42,7 @@ hstack_t stack_new()
         }
     }
     if (handler == -1) {   // array extension
-        p_top_nodes = realloc(a, (stacks_count + 1) * sizeof(struct{}*));
+        p_top_nodes = realloc(p_top_nodes, (stacks_count + 1) * sizeof(struct{}*));
         if (p_top_nodes == NULL) { //checking for correct memory allocation
             return -1;
         }
@@ -55,7 +54,6 @@ hstack_t stack_new()
         handler = stacks_count - 1;
         stacks_count += 1;  
     }
-    
     return handler;
 }
 
