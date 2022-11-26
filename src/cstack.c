@@ -60,7 +60,6 @@ void stack_free(const hstack_t hstack)
         prev = ptr->prev;
         free((void*)ptr);
         ptr = prev;
-        prev = prev == NULL ? NULL : ptr->prev;
     }
     g_table.entries[hstack].reserved = 0;
     g_table.size = g_table.size == 0 ? 0 : g_table.size - 1;
@@ -68,7 +67,7 @@ void stack_free(const hstack_t hstack)
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    if (g_table.entries == NULL ) return 1;
+    if (g_table.entries == NULL) return 1;
     return hstack < (int)g_table.size && g_table.entries[hstack].reserved == 1 ? 0 : 1;
 }
 
