@@ -30,7 +30,7 @@ struct stack_entries_table g_table = {0u, NULL};
 hstack_t stack_new()
 {
     if (g_table.entries == NULL) {
-        g_table.entries = (stack_entry_t*)malloc(sizeof(stack_entry_t) + sizeof(stack_entry_t*));
+        g_table.entries = (stack_entry_t*)malloc(sizeof(stack_entry_t));
         if (g_table.entries == NULL) exit(1);
     }
 
@@ -43,7 +43,7 @@ hstack_t stack_new()
 
     if (handler == -1) {
         handler = g_table.size;
-        g_table.entries = (stack_entry_t*)realloc(g_table.entries,(sizeof(stack_entry_t) + sizeof(stack_entry_t*)) * (g_table.size + 1));
+        g_table.entries = (stack_entry_t*)realloc(g_table.entries, (sizeof(stack_entry_t)) * (g_table.size + 1));
         if (g_table.entries == NULL) exit(1);
     }
         
@@ -57,17 +57,21 @@ void stack_free(const hstack_t hstack)
 {
     if (stack_valid_handler(hstack) == 1)
         return;
+
     const node_t* ptr = g_table.entries[hstack].top_stack;
     const node_t* prev;
 
     while(ptr != NULL) 
     {
+    	free((void*)ptr->data);
         prev = ptr->prev;
         free((void*)ptr);
         ptr = prev;
     }
+
     g_table.entries[hstack].reserved = 0;
     g_table.size--;
+    
     if (g_table.size == 0) {
         free(g_table.entries);
         g_table.entries = NULL;
@@ -129,6 +133,7 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 
     const node_t* ptr_new_top = ptr_top->prev;
     
+    free((void*)ptr_top->data);
     free((void*)ptr_top);
     g_table.entries[hstack].top_stack = (node_t*)ptr_new_top;
     return size_data_out;
