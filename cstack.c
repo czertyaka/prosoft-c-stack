@@ -1,5 +1,7 @@
 #include "cstack.h"
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define UNUSED(VAR) (void)(VAR)
 
@@ -10,11 +12,11 @@ struct node
     char data[0];
 };
 
-struct stack_entry
+/*struct stack_entry
 {
     int reserved;
     stack_t stack;
-};
+};*/
 
 typedef struct stack_entry stack_entry_t;
 
@@ -26,34 +28,37 @@ struct stack_entries_table
 
 struct stack_entries_table g_table = {0u, NULL};
 
+int stacks_count = 0;
 struct node** p_top_nodes; 
 
 hstack_t stack_new()
 {
     hstack_t handler = -1;
-    
-    for (int i = 0; i < stacks_count; i++){ // search for empty space
+
+    // search for empty space
+    for (int i = 0; i < stacks_count; i++){ 
         if (p_top_nodes[i] == NULL) {
+            //printf("cell %d is empty ", i);
             p_top_nodes[i] = malloc(sizeof(struct{}*));
-        if (p_top_nodes == NULL) { //checking for correct memory allocation
-            return -1;
-        }
-            handler = i;             
+            if (p_top_nodes[i] == NULL) { //checking for correct memory allocation
+                return -1;
+            }
+            handler = i;
+            return handler;
         }
     }
-    if (handler == -1) {   // array extension
-        p_top_nodes = realloc(p_top_nodes, (stacks_count + 1) * sizeof(struct{}*));
-        if (p_top_nodes == NULL) { //checking for correct memory allocation
-            return -1;
-        }
-        stacks_count += 1;
-        p_top_nodes[stacks_count - 1] = malloc(sizeof(struct{}*)); // creating a new pointer to a top node
-        if (p_top_nodes == NULL) { //checking for correct memory allocation
-            return -1;
-        }
-        handler = stacks_count - 1;
-        stacks_count += 1;  
+    // array extension
+    p_top_nodes = realloc(p_top_nodes, (stacks_count + 1) * sizeof(struct{}**));
+    if (p_top_nodes == NULL) { //checking for correct memory allocation
+        return -1;
     }
+    p_top_nodes[stacks_count] = malloc(sizeof(struct{}*)); // creating a new pointer to a top node
+    if (p_top_nodes [stacks_count - 1] == NULL) { //checking for correct memory allocation
+        return -1;
+    }
+    stacks_count += 1; 
+    handler = stacks_count - 1;
+    
     return handler;
 }
 
@@ -92,3 +97,19 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
     return 0;
 }
 
+int main()
+{
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    printf("%d\n", stack_new());
+    
+    return 0;
+}
