@@ -10,7 +10,7 @@ struct node
 {
     const struct node* prev;
     unsigned int size;
-    char data;
+    char* data;
     unsigned int node_number;
 };
 
@@ -102,9 +102,9 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
     }*/
     p_top_nodes[hstack] -> node_number = new_node_number;
     p_top_nodes[hstack] -> size = size;
-    p_top_nodes[hstack] -> data = malloc (size);
+    p_top_nodes[hstack] -> data = (char*) malloc (size);
     // Добавить обработку некорректного выделения памяти!!!
-    void *desptr = p_top_nodes[hstack] -> data;
+    char *desptr = p_top_nodes[hstack] -> data;
     memcpy(desptr, data_in, size);
 }
 
@@ -117,7 +117,7 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 }
 
 int main()
-{
+{   //stack_new test
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
@@ -129,11 +129,25 @@ int main()
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
+
+    //stack valid handler and push test
+
+    char ch;
+    printf("Enter the char to push: \n");
+    scanf("%c", &ch);
+
     printf("Enter the handler: \n");
     int h;
     scanf("%d", &h);
     if (!stack_valid_handler(h)) {
         printf("ptr is valid\n");
     } else printf("ptr is NOT valid\n");
+
+    //stack push test    
+    stack_push(h, &ch, sizeof(char));
+    printf("stack_push called\n");
+    char *p_c = p_top_nodes[h] -> data;
+    char c = *p_c;
+    printf("Pushed: %c\n", c);
     return 0;
 }
