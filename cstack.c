@@ -45,25 +45,27 @@ int stacks_count = 0;
 hstack_t stack_new()
 {
     hstack_t handler = -1;
-
+    printf("stacks_count = %d\n", stacks_count);
     // search for empty space
     for (int i = 0; i < stacks_count; i++) {
         if (handlers_table[i].reserved == 0) {
+            printf("Cell %d is empty\n", i);
             handlers_table[i].reserved = 1;
             handlers_table[i].p_top_node = NULL;
-            return handler;
+            return i;
         }
     }
     // array extension
     handlers_table = (stack_t*) realloc(handlers_table, (stacks_count + 1) * sizeof(stack_t*));
     if (handlers_table == NULL) { //checking for correct memory allocation
+        printf("Allocation error\n");
         return -1;
     }
     ++ stacks_count;
-    handlers_table[stacks_count - 1].reserved = 1;
-    handlers_table[stacks_count - 1].p_top_node = NULL;
     handler = stacks_count - 1;
-    
+    handlers_table[handler].reserved = 1;
+    handlers_table[handler].p_top_node = NULL;
+    printf("Array extension, returned %d\n", handler);
     return handler;
 }
 
