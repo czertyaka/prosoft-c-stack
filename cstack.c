@@ -73,14 +73,6 @@ void stack_free(const hstack_t hstack)
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    //debug start
-    /*printf("stack_valid_handler called\n");
-    if (hstack >= 0) printf("hstack >= 0\n");
-    printf("stacks_count = %d\n", stacks_count);
-    printf("hstack = %d\n", hstack);
-    if (hstack < stacks_count) printf("hstack < stacks_count\n");
-    if (p_top_nodes[hstack] != NULL) printf("p_top_nodes[hstack] != NULL\n");
-    *///debug end
     if ((hstack >= 0) && (hstack < stacks_count) && (p_top_nodes[hstack] != NULL)){
         return 0;
     } else return 1;
@@ -94,22 +86,25 @@ unsigned int stack_size(const hstack_t hstack)
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-    struct node* p_prev = p_top_nodes[hstack]; //saving pointer to prev element 
-    int new_node_number =  p_top_nodes[hstack] -> node_number + 1; 
-    p_top_nodes[hstack] = malloc(sizeof(struct{}*));
-    /*if (p_top_nodes [hstack] == NULL) { //checking for correct memory allocation
-    // Добавить обработку некорректного выделения памяти!!!
-    }*/
-    p_top_nodes[hstack] -> node_number = new_node_number;
-    p_top_nodes[hstack] -> size = size;
-    p_top_nodes[hstack] -> data = (char*) malloc (size);
-    // Добавить обработку некорректного выделения памяти!!!
-    char *desptr = p_top_nodes[hstack] -> data;
-    memcpy(desptr, data_in, size);
+    if (stack_valid_handler(hstack) == 0){
+        struct node* p_prev = p_top_nodes[hstack]; //saving pointer to prev element 
+        int new_node_number =  p_top_nodes[hstack] -> node_number + 1; 
+        p_top_nodes[hstack] = malloc(sizeof(struct{}*));
+        /*if (p_top_nodes [hstack] == NULL) { //checking for correct memory allocation
+        // Добавить обработку некорректного выделения памяти!!!
+        }*/
+        p_top_nodes[hstack] -> node_number = new_node_number;
+        p_top_nodes[hstack] -> size = size;
+        p_top_nodes[hstack] -> data = (char*) malloc (size);
+        // Добавить обработку некорректного выделения памяти!!!
+        char *desptr = p_top_nodes[hstack] -> data;
+        memcpy(desptr, data_in, size);
+    }
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
+    
     UNUSED(hstack);
     UNUSED(data_out);
     UNUSED(size);
