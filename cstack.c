@@ -118,7 +118,7 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
     if (data == NULL) 
         return;
 
-    memcpy (data, data_in, size);
+    memcpy(data, data_in, size);
     ptr_new_top->data = data;
     ptr_new_top->size = size + sizeof(ptr_new_top->prev) + sizeof(size);
 
