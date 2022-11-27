@@ -40,6 +40,7 @@ hstack_t stack_new()
     hstack_t handler = -1;
 
     // search for empty space
+    //как не путать свободное место от дна стека???
     for (int i = 0; i < stacks_count; i++){ 
         if (p_top_nodes[i] == NULL) {
             //printf("cell %d is empty ", i);
@@ -86,7 +87,7 @@ unsigned int stack_size(const hstack_t hstack)
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-    if (stack_valid_handler(hstack) == 0){
+    if ((stack_valid_handler(hstack) == 0)&&(data_in != NULL)){
         struct node* p_prev = p_top_nodes[hstack]; //saving pointer to prev element 
         int new_node_number =  p_top_nodes[hstack] -> node_number + 1; 
         p_top_nodes[hstack] = malloc(sizeof(struct{}*));
@@ -104,11 +105,27 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    
-    UNUSED(hstack);
-    UNUSED(data_out);
-    UNUSED(size);
-    return 0;
+    printf("pop called\n");
+    printf("hstack = %d\n", hstack);
+    if ((stack_valid_handler(hstack) == 0)
+        &&(data_out != NULL)
+        &&(p_top_nodes[hstack] != NULL))
+    {  
+        printf("conditions is OK\n");
+        int size_to_copy = (p_top_nodes[hstack] -> size > size) ? size : p_top_nodes[hstack] -> size;
+        printf("size_to_copy = %d\n", size_to_copy);
+        char *desptr = p_top_nodes[hstack] -> data;
+        memcpy(data_out, desptr, size_to_copy);
+        printf("Copied sucsessful\n");
+        const struct node* prev = p_top_nodes[hstack] -> prev;
+        printf("prev is seted\n");
+        //ДОРАБОТАТЬ ОЧИЩЕНИЕ ПАМЯТИ!!!!!!!!!!!!!!
+        //free(p_top_nodes[hstack] -> data); 
+        //free(p_top_nodes[hstack]);
+        p_top_nodes[hstack] = prev;
+        printf("end of pop\n\n");
+        return size_to_copy;
+    }
 }
 
 int main()
@@ -127,22 +144,27 @@ int main()
 
     //stack valid handler and push test
 
-    char ch;
-    printf("Enter the char to push: \n");
-    scanf("%c", &ch);
+    int x;
+    printf("Enter the int to push: \n");
+    scanf("%d", &x);
 
     printf("Enter the handler: \n");
     int h;
     scanf("%d", &h);
     if (!stack_valid_handler(h)) {
-        printf("ptr is valid\n");
-    } else printf("ptr is NOT valid\n");
+        printf("Handler is valid\n");
+    } else printf("Handler is NOT valid\n");
 
     //stack push test    
-    stack_push(h, &ch, sizeof(char));
+    stack_push(h, &x, sizeof(x));
     printf("stack_push called\n");
-    char *p_c = p_top_nodes[h] -> data;
+    /*char *p_c = p_top_nodes[h] -> data;
     char c = *p_c;
-    printf("Pushed: %c\n", c);
+    printf("Pushed: %c\n", c);*/
+
+    // stack pop test
+    int y;
+    stack_pop(h, &y, 4);
+    printf("Popped: %d\n", y);
     return 0;
 }
