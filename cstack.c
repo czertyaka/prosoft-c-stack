@@ -29,6 +29,9 @@ struct stack_entries_table
 };
 
 struct stack_entries_table g_table = {0u, NULL};
+/*struct top_node_table {
+    struct node* p_top_nodes
+};*/
 
 int stacks_count = 0;
 struct node** p_top_nodes; 
@@ -69,7 +72,7 @@ hstack_t stack_new()
 
 void stack_free(const hstack_t hstack)
 {
-    UNUSED(hstack);
+    
 }
 
 int stack_valid_handler(const hstack_t hstack)
@@ -80,9 +83,14 @@ int stack_valid_handler(const hstack_t hstack)
 }
 
 unsigned int stack_size(const hstack_t hstack)
-{
-    UNUSED(hstack);
-    return 0;
+{   
+    if (stack_valid_handler(hstack) == 0){
+        if (p_top_nodes[hstack] != NULL){
+        unsigned int size = p_top_nodes[hstack] -> node_number;
+        return size;
+        }
+        else return 0;
+    }
 }
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
