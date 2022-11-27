@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define UNUSED(VAR) (void)(VAR)
-
 typedef struct node
 {
     const struct node* prev;
@@ -29,9 +27,11 @@ struct stack_entries_table g_table = {0u, NULL};
 
 hstack_t stack_new()
 {
-    if (g_table.entries == NULL) {
+    if (g_table.entries == NULL) 
+    {
         g_table.entries = (stack_entry_t*)malloc(sizeof(stack_entry_t));
-        if (g_table.entries == NULL) exit(1);
+        if (g_table.entries == NULL) 
+            return -1;
     }
 
     int handler = -1;
@@ -41,10 +41,12 @@ hstack_t stack_new()
             handler = i;
     }
 
-    if (handler == -1) {
+    if (handler == -1) 
+    {
         handler = g_table.size;
         g_table.entries = (stack_entry_t*)realloc(g_table.entries, (sizeof(stack_entry_t)) * (g_table.size + 1));
-        if (g_table.entries == NULL) exit(1);
+        if (g_table.entries == NULL)
+            return -1;
     }
         
     g_table.entries[handler].top_stack = NULL;
@@ -72,7 +74,8 @@ void stack_free(const hstack_t hstack)
     g_table.entries[hstack].reserved = 0;
     g_table.size--;
     
-    if (g_table.size == 0) {
+    if (g_table.size == 0) 
+    {
         free(g_table.entries);
         g_table.entries = NULL;
     }
@@ -80,7 +83,7 @@ void stack_free(const hstack_t hstack)
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    return g_table.entries == NULL || hstack >= (int)g_table.size || g_table.entries[hstack].reserved == 0;
+    return g_table.entries == NULL || hstack < 0 || hstack >= (int)g_table.size || g_table.entries[hstack].reserved == 0;
 }
 
 unsigned int stack_size(const hstack_t hstack)
@@ -102,13 +105,19 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 {
     if (stack_valid_handler(hstack) == 1)
         return;
-    if (data_in == NULL || size == 0u) return;
+    if (data_in == NULL || size == 0u) 
+        return;
 
     node_t* ptr_top = g_table.entries[hstack].top_stack;
     node_t* ptr_new_top = (node_t*)malloc(sizeof(node_t) + sizeof(ptr_top->data));
+    if (ptr_new_top == NULL) 
+        return;
     ptr_new_top->prev = ptr_top;
     
     void* data = (void*)malloc(size);
+    if (data == NULL) 
+        return;
+
     memcpy (data, data_in, size);
     ptr_new_top->data = data;
     ptr_new_top->size = size + sizeof(ptr_new_top->prev) + sizeof(size);
