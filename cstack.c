@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define UNUSED(VAR) (void)(VAR)
 
@@ -9,7 +10,8 @@ struct node
 {
     const struct node* prev;
     unsigned int size;
-    char data[0];
+    char data;
+    unsigned int node_number;
 };
 
 /*struct stack_entry
@@ -30,6 +32,8 @@ struct stack_entries_table g_table = {0u, NULL};
 
 int stacks_count = 0;
 struct node** p_top_nodes; 
+
+// Functions:
 
 hstack_t stack_new()
 {
@@ -62,9 +66,6 @@ hstack_t stack_new()
     return handler;
 }
 
-
-//////////////////
-
 void stack_free(const hstack_t hstack)
 {
     UNUSED(hstack);
@@ -72,8 +73,17 @@ void stack_free(const hstack_t hstack)
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    UNUSED(hstack);
-    return 1;
+    //debug start
+    /*printf("stack_valid_handler called\n");
+    if (hstack >= 0) printf("hstack >= 0\n");
+    printf("stacks_count = %d\n", stacks_count);
+    printf("hstack = %d\n", hstack);
+    if (hstack < stacks_count) printf("hstack < stacks_count\n");
+    if (p_top_nodes[hstack] != NULL) printf("p_top_nodes[hstack] != NULL\n");
+    *///debug end
+    if ((hstack >= 0) && (hstack < stacks_count) && (p_top_nodes[hstack] != NULL)){
+        return 0;
+    } else return 1;
 }
 
 unsigned int stack_size(const hstack_t hstack)
@@ -84,9 +94,18 @@ unsigned int stack_size(const hstack_t hstack)
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-    UNUSED(hstack);
-    UNUSED(data_in);
-    UNUSED(size);
+    struct node* p_prev = p_top_nodes[hstack]; //saving pointer to prev element 
+    int new_node_number =  p_top_nodes[hstack] -> node_number + 1; 
+    p_top_nodes[hstack] = malloc(sizeof(struct{}*));
+    /*if (p_top_nodes [hstack] == NULL) { //checking for correct memory allocation
+    // Добавить обработку некорректного выделения памяти!!!
+    }*/
+    p_top_nodes[hstack] -> node_number = new_node_number;
+    p_top_nodes[hstack] -> size = size;
+    p_top_nodes[hstack] -> data = malloc (size);
+    // Добавить обработку некорректного выделения памяти!!!
+    void *desptr = p_top_nodes[hstack] -> data;
+    memcpy(desptr, data_in, size);
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
@@ -110,6 +129,11 @@ int main()
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
     printf("%d\n", stack_new());
-    
+    printf("Enter the handler: \n");
+    int h;
+    scanf("%d", &h);
+    if (!stack_valid_handler(h)) {
+        printf("ptr is valid\n");
+    } else printf("ptr is NOT valid\n");
     return 0;
 }
