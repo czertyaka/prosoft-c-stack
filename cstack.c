@@ -30,7 +30,7 @@ struct stack_entries_table g_table = { 0u, 0u, NULL };
 #define CHECK_AFTER_ALLOC(ptr, return_value) if(ptr == NULL) \
                                              { \
                                                  return return_value; \
-                                             } \
+                                             } else (void)0
 
 hstack_t stack_new()
 {
