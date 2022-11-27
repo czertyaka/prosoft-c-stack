@@ -10,4 +10,8 @@ unsigned int stack_size(const hstack_t stack);
 void stack_push(const hstack_t stack, const void* data_in, const unsigned int size);
 unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int size);
 
+#ifndef NDEBUG
+void stack_print(const hstack_t hstack);
+#endif
+
 #endif /* CSTACK_H */
