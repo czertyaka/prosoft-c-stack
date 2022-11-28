@@ -27,7 +27,9 @@ add_test(NAME cstack_test COMMAND cstack_test)
 
 # compilation flags
 if (MSVC)
-    target_compile_options(cstack PRIVATE /Wall)
+    set(MSVC_FLAGS /Wall /WX)
+    target_compile_options(cstack PRIVATE ${MSVC_FLAGS})
+    target_link_options(cstack PRIVATE ${MSVC_FLAGS})
 else()
     target_compile_options(cstack PRIVATE -Wall -Wextra -Wformat -Wformat-security -Werror)
     set(SANITIZERS_FLAGS -fsanitize=undefined -fsanitize=address)
