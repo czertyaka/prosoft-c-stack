@@ -2,13 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0091 NEW)
 project(cstack)
 
-# compilation flags
-set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-if (!WIN32)
-    set(COMMON_FLAGS "-Wall -Wextra -Wformat -Wformat-security -Werror")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS} -fsanitize=undefined -fsanitize=address")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
-endif()
+# choose runtime libs for MSVC
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # clone & build Google Test
 include(cmake/gtest.cmake)
@@ -29,3 +24,15 @@ target_link_libraries(cstack_test
     ${GMOCK_MAIN_LIBRARY}
 )
 add_test(NAME cstack_test COMMAND cstack_test)
+
+# compilation flags
+if (MSVC)
+    set(MSVC_FLAGS /Wall /WX)
+    target_compile_options(cstack PRIVATE ${MSVC_FLAGS})
+    target_link_options(cstack PRIVATE ${MSVC_FLAGS})
+else()
+    target_compile_options(cstack PRIVATE -Wall -Wextra -Wformat -Wformat-security -Werror)
+    set(SANITIZERS_FLAGS -fsanitize=undefined -fsanitize=address)
+    target_compile_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
+    target_link_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
+endif()
