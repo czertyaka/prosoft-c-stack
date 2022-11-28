@@ -19,11 +19,24 @@ struct stack {
 
 struct {
     struct stack* table[NSTACKS];
-    size_t append_index;
 
-} stack_table = { .table = {}, .append_index = 0u };
+} stack_table = { .table = {} };
 
 hstack_t stack_new( void ) {
+    size_t first_free = NSTACKS;
+
+    for (size_t i = 0u; i < NSTACKS; i++) {
+
+        if (stack_table.table[i] == 0) {
+            first_free = i;
+            break;
+        }
+    }
+
+    if (first_free == NSTACKS) {
+        return STACK_INVALID_HANDLE;
+    }
+
     struct stack* const stack = malloc( sizeof( struct stack ) );
 
     if ( !stack ) {
@@ -34,9 +47,10 @@ hstack_t stack_new( void ) {
     stack->top = stack->base;
     stack->empty = 1;
 
-    stack_table.table[stack_table.append_index] = stack;
+    /* printf("%lu %p\n", first_free, stack); */
+    stack_table.table[first_free] = stack;
 
-    return stack_table.append_index++;
+    return first_free;
 }
 
 void stack_free( const hstack_t hstack ) {
@@ -55,11 +69,15 @@ void stack_free( const hstack_t hstack ) {
 
 int stack_valid_handler( const hstack_t hstack ) {
 
-    if (hstack >= 0 && hstack < stack_table.append_index) {
-        return 0;
+    if ( hstack >= NSTACKS ) {
+        return 1;
     }
 
-    return 1;
+    if (stack_table.table[hstack] == 0) {
+        return 1;
+    }
+
+    return 0;
 }
 
 unsigned int stack_size( const hstack_t hstack ) {
@@ -70,7 +88,7 @@ unsigned int stack_size( const hstack_t hstack ) {
 
     struct stack* stack = stack_table.table[hstack];
 
-    if (stack->empty) {
+    if ( stack->empty ) {
         return 0;
     }
 
@@ -122,7 +140,7 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
         --stack->top;
     }
 
-    if (-1 == stack->top - stack->base) {
+    if ( -1 == stack->top - stack->base ) {
 
         stack->empty = 1;
         stack->top = stack->base;
@@ -139,6 +157,15 @@ void stack_print( const hstack_t hstack ) {
 
     for ( size_t i = 0u; i < size; i++ ) {
         printf( "%d\n", stack->base[i] );
+    }
+}
+#endif
+
+#ifndef NDEBUG
+void stack_table_print( void ) {
+
+    for (size_t i = 0; i < NSTACKS; i++) {
+        printf("%p\n", stack_table.table[i]);
     }
 }
 #endif

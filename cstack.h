@@ -12,6 +12,7 @@ unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int 
 
 #ifndef NDEBUG
 void stack_print(const hstack_t hstack);
+void stack_table_print(void);
 #endif
 
 #endif /* CSTACK_H */
