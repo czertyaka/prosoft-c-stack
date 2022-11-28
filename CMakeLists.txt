@@ -54,4 +54,5 @@ function(add_homework name)
 endfunction()
 
 add_homework(default .)
+add_homework(MyxaWanyuha)
 
