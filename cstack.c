@@ -1,5 +1,6 @@
 #include "cstack.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #define NSTACKS ( 8 )
@@ -11,8 +12,8 @@
 #endif
 
 struct stack {
-    char* base;
-    char* top;
+    uint8_t* base;
+    uint8_t* top;
 
     int empty;
 };
@@ -102,8 +103,10 @@ void stack_push( const hstack_t hstack, const void* buffer,
         return;
     }
 
-    struct stack* stack = stack_table.table[hstack];
-    char* source = (char*)buffer;
+    struct stack* const stack = stack_table.table[hstack];
+    const uint8_t* const source = (uint8_t*)buffer;
+
+    /* printf("%x %x\n", stack->base, stack->top); */
 
     for ( size_t i = 0u; i < bflen; i++ ) {
 
@@ -131,13 +134,13 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
         nwrbytes = stacklen;
     }
 
-    char* const destination = buffer;
+    uint8_t* const destination = (uint8_t*)buffer;
 
     for ( size_t i = 0u; i < nwrbytes; i++ ) {
         printf( "%d\n", *( stack->top ) );
 
         destination[i] = *( stack->top );
-        --stack->top;
+        stack->top--;
     }
 
     if ( -1 == stack->top - stack->base ) {
