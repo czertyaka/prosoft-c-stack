@@ -14,24 +14,6 @@ typedef struct node
     unsigned int node_number;
 } node_t;
 
-/*struct stack_entry
-{
-    int reserved;
-    stack_t stack;
-};*/
-
-typedef struct stack_entry stack_entry_t;
-
-struct stack_entries_table
-{
-    unsigned int size;
-    stack_entry_t* entries;
-};
-
-struct stack_entries_table g_table = {0u, NULL};
-
-
-//////////new achitecture
 typedef struct top_node_table {
     unsigned short int reserved;
     struct node* p_top_node;
@@ -45,11 +27,9 @@ int stacks_count = 0;
 hstack_t stack_new()
 {
     hstack_t handler = -1;
-    printf("stacks_count = %d\n", stacks_count);
     // search for empty space
     for (int i = 0; i < stacks_count; i++) {
         if (handlers_table[i] -> reserved == 0) {
-            printf("Cell %d is empty\n", i);
             handlers_table[i] -> reserved = 1;
             handlers_table[i] -> p_top_node = NULL;
             return i;
@@ -58,7 +38,6 @@ hstack_t stack_new()
     // array extension
     handlers_table = realloc(handlers_table, (stacks_count + 1) * sizeof(handlers_table));
     if (handlers_table == NULL) { //checking for correct memory allocation
-        printf("Reallocation error\n");
         return -1;
     }
     ++ stacks_count;
@@ -66,7 +45,6 @@ hstack_t stack_new()
     handlers_table[handler] = malloc(sizeof(stack_t*));
     handlers_table[handler] -> reserved = 1;
     handlers_table[handler] -> p_top_node = NULL;
-    printf("Array extension, returned %d\n", handler);
     return handler;
 }
 
@@ -77,12 +55,12 @@ void stack_free(const hstack_t hstack) {
     if (handlers_table[hstack] -> p_top_node == NULL) {
         handlers_table[hstack] -> reserved = 0;
         return;
-    } //добавить дефрагментацию
+    } //добавить дефрагментацию!!!
     while (handlers_table[hstack] -> p_top_node != NULL) {
         const struct node* prev_node = handlers_table[hstack] -> p_top_node -> prev;
         //НЕ РАБОТАЕТ ОСВОБОЖДЕНИЕ ПАМЯТИ!!!!!!!!!!!!!!
-        //free(handlers_table[hstack].p_top_node -> data); 
-        //free(handlers_table[hstack].p_top_node);
+        //free(handlers_table[hstack] -> p_top_node -> data); 
+        //free(handlers_table[hstack] -> p_top_node);
         handlers_table[hstack] -> p_top_node = prev_node;
     }
     handlers_table[hstack] -> reserved = 0;
@@ -131,66 +109,73 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    printf("pop called\n");
-    printf("hstack = %d\n", hstack);
     if ((stack_valid_handler(hstack) == 0)
         &&(data_out != NULL)
         &&(handlers_table[hstack] -> p_top_node != NULL)) {
 
-        printf("conditions is OK\n");
         int size_to_copy = (handlers_table[hstack] -> p_top_node -> size > size) ? size : handlers_table[hstack] -> p_top_node -> size;
-        printf("size_to_copy = %d\n", size_to_copy);
         char *data_in = handlers_table[hstack] -> p_top_node -> data;
         memcpy(data_out, data_in, size_to_copy);
-        printf("Copied sucsessful\n");
         const struct node* prev_node = handlers_table[hstack] -> p_top_node -> prev;
-        printf("prev is seted\n");
         //НЕ РАБОТАЕТ ОСВОБОЖДЕНИЕ ПАМЯТИ!!!!!!!!!!!!!!
-        //free(handlers_table[hstack].p_top_node -> data); 
-        //free(handlers_table[hstack].p_top_node);
+        //free(handlers_table[hstack] -> p_top_node -> data); 
+        //free(handlers_table[hstack] -> p_top_node);
         handlers_table[hstack] -> p_top_node = prev_node;
-        printf("end of pop\n\n");
         return size_to_copy;
     }
 }
 
 int main()
-{   //stack_new test
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    printf("%d\n", stack_new());
-    
+{   
+    while(1){
+        char input;
+        printf("\nChoose function:\nn - stack_new\nf - stack free\nv - stack_valid_handler\ns - stack_size\nu - stack_push\no - stack_pop\nq - quit\nYour char: ");
+        scanf("%c", &input);
+        if (input == 'n'){
+            printf("%d\n", stack_new());
+        }
+        if (input == 'v'){
+            printf("Enter the handler: ");
+            int h;
+            scanf("%d", &h);
+            if (!stack_valid_handler(h)) {
+                printf("Handler is valid\n");
+            } else printf("Handler is NOT valid\n");
+        }
+        if (input == 'u'){
+            printf("Enter the handler: ");
+            int h;
+            scanf("%d", &h);
+            int x;
+            printf("Enter the int to push: ");
+            scanf("%d", &x);
+            stack_push(h, &x, sizeof(x));
+        }
+        if (input == 'o') {
+            printf("Enter the handler: ");
+            int h;
+            scanf("%d", &h);
+            int y;
+            stack_pop(h, &y, 4);
+            printf("Popped: %d\n", y);
+        }
+        if (input == 'f'){
+            printf("Enter the handler: ");
+            int h;
+            scanf("%d", &h);
+            stack_free(h);
+        }
+        if (input == 's'){
+            printf("Enter the handler: ");
+            int h;
+            scanf("%d", &h);
+            printf("%d\n", stack_size(h));
+        }
+        
+        if (input == 'q') {
+            return 0;
+        }
 
-    //stack valid handler and push test
-
-    int x;
-    printf("Enter the int to push: \n");
-    scanf("%d", &x);
-
-    printf("Enter the handler: \n");
-    int h;
-    scanf("%d", &h);
-    if (!stack_valid_handler(h)) {
-        printf("Handler is valid\n");
-    } else printf("Handler is NOT valid\n");
-
-    //stack push test    
-    stack_push(h, &x, sizeof(x));
-    printf("stack_push called\n");
-
-    // stack pop test
-    int y;
-    stack_pop(h, &y, 4);
-    printf("Popped: %d\n", y);
+    }
     return 0;
-
-    stack_push(h, &x, sizeof(x));
 }
