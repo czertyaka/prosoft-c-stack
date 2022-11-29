@@ -118,8 +118,8 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
         memcpy(data_out, data_in, size_to_copy);
         const struct node* prev_node = handlers_table[hstack] -> p_top_node -> prev;
         //НЕ РАБОТАЕТ ОСВОБОЖДЕНИЕ ПАМЯТИ!!!!!!!!!!!!!!
-        //free(handlers_table[hstack] -> p_top_node -> data); 
-        //free(handlers_table[hstack] -> p_top_node);
+        free((void*)handlers_table[hstack] -> p_top_node -> data); 
+        free((void*)handlers_table[hstack] -> p_top_node);
         handlers_table[hstack] -> p_top_node = prev_node;
         return size_to_copy;
     }
