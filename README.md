@@ -16,7 +16,7 @@ Class project for C-language lessons, Prosoft Developer School 2022
 ## Зависимости
 `gcc >= 6.1` или `clang >= 6.0.0` - компиляторы C/С++
 
-`cmake >= 3.5` - генератор скриптов сборки make/Ninja/etc
+`cmake >= 3.15` - генератор скриптов сборки make/Ninja/etc
 
 `libasan` - библиотека адрес-санитайзера
 
