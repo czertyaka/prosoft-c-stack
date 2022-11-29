@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define NSTACKS ( 8 )
+#define NSTACKS ( 16 )
 #define STACK_MAX_LENGTH ( 32 )
 #define STACK_INVALID_HANDLE ( -1 )
 
@@ -15,6 +15,7 @@ struct stack {
     uint8_t* base;
     uint8_t* top;
 
+    size_t npush;
     int empty;
 };
 
@@ -47,6 +48,7 @@ hstack_t stack_new( void ) {
     stack->base = calloc( 1, STACK_MAX_LENGTH );
     stack->top = stack->base;
     stack->empty = 1;
+    stack->npush = 0u;
 
     /* printf("%lu %p\n", first_free, stack); */
     stack_table.table[first_free] = stack;
@@ -89,11 +91,13 @@ unsigned int stack_size( const hstack_t hstack ) {
 
     struct stack* stack = stack_table.table[hstack];
 
-    if ( stack->empty ) {
-        return 0;
-    }
+    return stack->npush;
 
-    return ( stack->top - stack->base + 1 );
+    /* if ( stack->empty ) { */
+        /* return 0; */
+    /* } */
+
+    /* return ( stack->top - stack->base + 1 ); */
 }
 
 void stack_push( const hstack_t hstack, const void* buffer,
@@ -116,16 +120,25 @@ void stack_push( const hstack_t hstack, const void* buffer,
 
     stack->top += bflen - 1;
     stack->empty = 0;
+    (stack->npush)++;
 }
 
 unsigned int stack_pop( const hstack_t hstack, void* buffer,
                         const unsigned int bflen ) {
 
-    if ( !buffer || !bflen || 0 != stack_valid_handler( hstack ) ) {
+    if (0 != stack_valid_handler( hstack )) {
+        return 0u;
+    }
+
+    if ( !buffer || !bflen) {
         return 0u;
     }
 
     struct stack* const stack = stack_table.table[hstack];
+
+    if (0u == stack->npush) {
+        return 0u;
+    }
 
     const size_t stacklen = stack->top - stack->base + 1u;
     size_t nwrbytes = bflen;
@@ -144,6 +157,7 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
     }
 
     stack->top -= nwrbytes;
+    (stack->npush)--;
 
     if ( -1 == stack->top - stack->base ) {
 
