@@ -135,13 +135,15 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
     }
 
     uint8_t* const destination = (uint8_t*)buffer;
+    uint8_t *start = stack->base + (stacklen - nwrbytes);
 
     for ( size_t i = 0u; i < nwrbytes; i++ ) {
-        printf( "%d\n", *( stack->top ) );
+        printf( "%d\n", *( start + i ));
 
-        destination[i] = *( stack->top );
-        stack->top--;
+        destination[i] = *( start + i );
     }
+
+    stack->top -= nwrbytes;
 
     if ( -1 == stack->top - stack->base ) {
 
