@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(Stack-Stuck)
+project(cstack)
 
 # clone & build Google Test
 include(cmake/gtest.cmake)
