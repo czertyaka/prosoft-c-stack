@@ -50,16 +50,22 @@ hstack_t stack_new( void ) {
         return STACK_INVALID_HANDLE;
     }
 
-    // ?0
     stack->base = calloc( 1, STACK_MAX_LENGTH );
+
+    if (NULL == stack->base) {
+        return STACK_INVALID_HANDLE;
+    }
+
     stack->elst = calloc( STACK_MAX_LENGTH, sizeof( size_t ) );
 
-    stack->top = 0;
-    /* stack->top = stack->base; */
-    /* stack->empty = 1; */
-    stack->npush = 0u;
+    if (NULL == stack->elst) {
 
-    /* printf("%lu %p\n", first_free, stack); */
+        free(stack->base);
+        return STACK_INVALID_HANDLE;
+    }
+
+    stack->top = 0;
+    stack->npush = 0u;
     stack_table.table[first_free] = stack;
 
     return first_free;
@@ -74,8 +80,8 @@ void stack_free( const hstack_t hstack ) {
     struct stack* stack = stack_table.table[hstack];
 
     free( stack->base );
-    free( stack );
     free( stack->elst );
+    free( stack );
 
     stack_table.table[hstack] = 0;
 }
@@ -99,15 +105,7 @@ unsigned int stack_size( const hstack_t hstack ) {
         return 0u;
     }
 
-    struct stack* stack = stack_table.table[hstack];
-
-    return stack->npush;
-
-    /* if ( stack->empty ) { */
-    /* return 0; */
-    /* } */
-
-    /* return ( stack->top - stack->base + 1 ); */
+    return stack_table.table[hstack]->npush;
 }
 
 void stack_push( const hstack_t hstack, const void* buffer,
@@ -177,9 +175,6 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
     if (current == stack->base) {
         current++;
     }
-
-    /* printf("%i %i %i %i\n",*start, *(start+1),*(start+2),*(start+3)); */
-    /* printf("%i %i %i %i\n",*(stack->top), *(stack->top - 1),*(stack->top-2),*(stack->top-3)); */
 
     int base_catched = 0;
 
