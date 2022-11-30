@@ -48,7 +48,6 @@ hstack_t stack_new(){
 void stack_free(const hstack_t hstack) {
     //checking for valid memory
     if (stack_valid_handler(hstack) == 1) {
-        printf("Handler invalid\n");
         return;
     }
     //checking for 0 element
