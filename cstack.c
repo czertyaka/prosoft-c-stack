@@ -19,8 +19,6 @@ typedef struct top_node_table {
 stack_t* handlers_table; 
 int table_size = 0;
 
-//Как сделать код читабельнее?
-
 // Functions:
 
 hstack_t stack_new(){
@@ -46,22 +44,22 @@ hstack_t stack_new(){
 }
 
 void stack_free(const hstack_t hstack) {
-    //checking for valid memory
+    //checking for valid handler
     if (stack_valid_handler(hstack) == 1) {
         return;
     }
+    node_t* top = handlers_table[hstack].p_top_node;
     //checking for 0 element
-    if (handlers_table[hstack].p_top_node == NULL) {
+    if (top == NULL) {
         handlers_table[hstack].reserved = 0;
         return;
     }
     //delete all elements
-    while (handlers_table[hstack].p_top_node != NULL) {
-        node_t* prev_node = handlers_table[hstack].p_top_node -> prev;
-        //Правильно ли освобождаю память?
-        free(handlers_table[hstack].p_top_node -> data); 
-        free((void*)handlers_table[hstack].p_top_node);
-        handlers_table[hstack].p_top_node = prev_node;
+    while (top != NULL) {
+        node_t* prev_node = top -> prev;
+        free(top -> data); 
+        free(top);
+        top = prev_node;
     }
     handlers_table[hstack].reserved = 0;
     //resize table if able
@@ -82,8 +80,9 @@ int stack_valid_handler(const hstack_t hstack){
 
 unsigned int stack_size(const hstack_t hstack){   
     if (stack_valid_handler(hstack) == 0){
-        if (handlers_table[hstack].p_top_node != NULL){
-            unsigned int size = handlers_table[hstack].p_top_node -> node_number;
+        node_t* top = handlers_table[hstack].p_top_node;
+        if (top != NULL){
+            unsigned int size = top -> node_number;
             return size;
         }
         return 0;
@@ -92,8 +91,9 @@ unsigned int stack_size(const hstack_t hstack){
 }
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size) {     
-    if ((stack_valid_handler(hstack) == 0)&&(data_in != NULL)){
-        node_t* p_prev = handlers_table[hstack].p_top_node; //saving pointer to prev element
+    if ((stack_valid_handler(hstack) == 0)&&(data_in != NULL)&&(size >0)){
+        node_t* top = handlers_table[hstack].p_top_node;
+        node_t* p_prev = top; //saving pointer to prev element
         int new_node_number = 1;
         if (p_prev != NULL) {
             new_node_number = p_prev -> node_number + 1; //increment number of node
@@ -102,34 +102,38 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
         if (handlers_table[hstack].p_top_node == NULL) { //checking for correct memory allocation
             return;
         }
-        handlers_table[hstack].p_top_node -> prev = p_prev;
-        handlers_table[hstack].p_top_node -> node_number = new_node_number;
-        handlers_table[hstack].p_top_node -> data = (char*) malloc (size);
-        if (handlers_table[hstack].p_top_node -> data == NULL) { //checking for correct memory allocation
+        top = handlers_table[hstack].p_top_node;
+        top -> prev = p_prev;
+        top -> node_number = new_node_number;
+        top -> data = (char*) malloc (size);
+        if (top -> data == NULL) { //checking for correct memory allocation
             return;
         }
-        handlers_table[hstack].p_top_node -> size = size;
-        char *data_out = handlers_table[hstack].p_top_node -> data;
+        top -> size = size;
+        char *data_out = top -> data;
         memcpy(data_out, data_in, size);
     }
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
+    node_t* top = handlers_table[hstack].p_top_node;
     if ((stack_valid_handler(hstack) == 0) //cheaking for correct input
         &&(data_out != NULL)
-        &&(handlers_table[hstack].p_top_node != NULL)
+        &&(top != NULL)
         &&(size > 0)) {
 
-        int size_to_copy = (handlers_table[hstack].p_top_node -> size > size) ? size : handlers_table[hstack].p_top_node -> size;
-        char *data_in = handlers_table[hstack].p_top_node -> data;
-        memcpy(data_out, data_in, size_to_copy);
-        struct node* prev_node = handlers_table[hstack].p_top_node -> prev;
-        //Правильно ли освобождаю память?
-        free((void*)handlers_table[hstack].p_top_node -> data); 
-        free((void*)handlers_table[hstack].p_top_node);
-        handlers_table[hstack].p_top_node = prev_node;
-        return size_to_copy;
+        if (size >= top -> size) {
+            char *data_in = top -> data;
+            memcpy(data_out, data_in, top -> size);
+            unsigned int result = top -> size;
+            struct node* prev_node = top -> prev;
+            free((void*)top -> data); 
+            free((void*)top);
+            handlers_table[hstack].p_top_node = prev_node;
+            return result;
+        }
+        return 0;
     } 
     return 0;
 }
