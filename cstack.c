@@ -4,9 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NSTACKS ( 16 )
-#define STACK_MAX_LENGTH ( 32 )
-#define STACK_INVALID_HANDLE ( -1 )
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -17,58 +14,57 @@ struct stack {
     uint8_t* top;
 
     size_t npush;
-    /* int empty; */
 
     /* element size table */
-    /* NO -> nbytes */
+    /* NO -> element with NO size in nbytes */
     size_t* elst;
 };
 
 struct {
     struct stack* table[NSTACKS];
 
-} stack_table = { .table = {} };
+} stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t first_free = NSTACKS;
+    size_t nfirst_free = NSTACKS;
 
     for ( size_t i = 0u; i < NSTACKS; i++ ) {
 
-        if ( stack_table.table[i] == 0 ) {
-            first_free = i;
+        if ( NULL == stack_table.table[i] ) {
+            nfirst_free = i;
             break;
         }
     }
 
-    if ( NSTACKS == first_free ) {
+    if ( NSTACKS == nfirst_free ) {
         return STACK_INVALID_HANDLE;
     }
 
     struct stack* const stack = malloc( sizeof( struct stack ) );
 
-    if ( !stack ) {
+    if ( NULL == stack ) {
         return STACK_INVALID_HANDLE;
     }
 
-    stack->base = calloc( 1, STACK_MAX_LENGTH );
+    stack->base = calloc( 1, STACK_MAX_SIZE );
 
-    if (NULL == stack->base) {
+    if ( NULL == stack->base ) {
         return STACK_INVALID_HANDLE;
     }
 
-    stack->elst = calloc( STACK_MAX_LENGTH, sizeof( size_t ) );
+    stack->elst = calloc( STACK_MAX_SIZE, sizeof( size_t ) );
 
-    if (NULL == stack->elst) {
+    if ( NULL == stack->elst ) {
 
-        free(stack->base);
+        free( stack->base );
         return STACK_INVALID_HANDLE;
     }
 
-    stack->top = 0;
+    stack->top = stack->base;
     stack->npush = 0u;
-    stack_table.table[first_free] = stack;
+    stack_table.table[nfirst_free] = stack;
 
-    return first_free;
+    return nfirst_free;
 }
 
 void stack_free( const hstack_t hstack ) {
@@ -77,22 +73,22 @@ void stack_free( const hstack_t hstack ) {
         return;
     }
 
-    struct stack* stack = stack_table.table[hstack];
+    struct stack* const stack = stack_table.table[hstack];
 
     free( stack->base );
     free( stack->elst );
     free( stack );
 
-    stack_table.table[hstack] = 0;
+    stack_table.table[hstack] = NULL;
 }
 
 int stack_valid_handler( const hstack_t hstack ) {
 
-    if ( hstack >= NSTACKS ) {
+    if ( NSTACKS <= (unsigned)hstack ) {
         return 1;
     }
 
-    if ( stack_table.table[hstack] == 0 ) {
+    if ( NULL == stack_table.table[hstack] ) {
         return 1;
     }
 
@@ -109,44 +105,38 @@ unsigned int stack_size( const hstack_t hstack ) {
 }
 
 void stack_push( const hstack_t hstack, const void* buffer,
-                 const unsigned int bflen ) {
+                 const unsigned int bfsize ) {
 
-    if ( !buffer || !bflen || 0 != stack_valid_handler( hstack ) ) {
+    if ( 0 != stack_valid_handler( hstack ) ) {
+        return;
+    }
+
+    if ( NULL == buffer || 0u == bfsize ) {
+        return;
+    }
+
+    if ( bfsize > STACK_MAX_SIZE ) {
         return;
     }
 
     struct stack* const stack = stack_table.table[hstack];
-    const uint8_t* const source = (uint8_t* const)buffer;
+    const uint8_t* const source = buffer;
 
-    if ( stack->npush == 0u ) {
-        stack->top = stack->base;
-    }
+    uint8_t* push_start = stack->top + ( stack->top != stack->base );
+    memcpy( push_start, source, bfsize );
 
-    /* printf("%x %x\n", stack->base, stack->top); */
-
-    for ( size_t i = 0u; i < bflen; i++ ) {
-
-        stack->top[i] = source[i];
-        printf( "%i\n", stack->top[i] );
-    }
-
-    stack->top += bflen - (stack->npush == 0u);
-
-    printf("%u %lu\n", bflen, stack->top - stack->base + 1);
-    stack->elst[stack->npush] = bflen;
-
-    /* stack->empty = 0; */
-    ( stack->npush )++;
+    stack->top += bfsize - ( stack->top == stack->base );
+    stack->elst[stack->npush++] = bfsize;
 }
 
 unsigned int stack_pop( const hstack_t hstack, void* buffer,
-                        const unsigned int bflen ) {
+                        const unsigned int bfsize ) {
 
     if ( 0 != stack_valid_handler( hstack ) ) {
         return 0u;
     }
 
-    if ( !buffer || !bflen ) {
+    if ( NULL == buffer || 0u == bfsize ) {
         return 0u;
     }
 
@@ -156,54 +146,19 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
         return 0u;
     }
 
-    if ( stack->elst[stack->npush - 1] > bflen ) {
+    const size_t size = stack->elst[stack->npush - 1];
+
+    if ( size > bfsize ) {
         return 0u;
     }
 
-    const size_t stacklen = stack->top - stack->base + 1u;
-    size_t nwrbytes = bflen;
+    uint8_t* start = stack->top - size + 1;
+    memcpy( buffer, start, bfsize );
 
-    if ( bflen > stacklen ) {
-        nwrbytes = stacklen;
-    }
+    stack->top -= size;
+    stack->elst[--stack->npush] = 0u;
 
-    printf("%lu %u %lu\n", stacklen, bflen, stack->npush);
-
-    uint8_t* const destination = (uint8_t* const)buffer;
-    uint8_t* current = stack->top - nwrbytes;
-
-    if (current == stack->base) {
-        current++;
-    }
-
-    int base_catched = 0;
-
-    for ( size_t i = 0u; i < nwrbytes;  ) {
-
-        printf("%i %i\n", *current, current + 1 == stack->base);
-
-        if (current + 1 == stack->base) {
-            base_catched=1;
-        }
-
-        destination[i - base_catched] = *current;
-
-        current++;
-        i++;
-    }
-
-    stack->top -= nwrbytes;
-    ( stack->npush )--;
-
-    //TODO обновление elst
-
-    /* if ( -1 == stack->top - stack->base ) { */
-
-    /* stack->empty = 1; */
-    /* stack->top = stack->base; */
-    /* } */
-
-    return nwrbytes;
+    return size;
 }
 
 #ifndef NDEBUG
@@ -213,7 +168,7 @@ void stack_print( const hstack_t hstack ) {
     const size_t size = stack->top - stack->base + 1u;
 
     for ( size_t i = 0u; i < size; i++ ) {
-        printf( "%d\n", stack->base[i] );
+        printf( "%x\n", stack->base[i] );
     }
 }
 #endif
@@ -222,7 +177,7 @@ void stack_print( const hstack_t hstack ) {
 void stack_table_print( void ) {
 
     for ( size_t i = 0u; i < NSTACKS; i++ ) {
-        printf( "%p\n", stack_table.table[i] );
+        printf( "%p\n", (void*)stack_table.table[i] );
     }
 }
 #endif

@@ -3,6 +3,10 @@
 
 typedef int hstack_t;
 
+#define NSTACKS ( 16u )
+#define STACK_MAX_SIZE ( 32u )
+#define STACK_INVALID_HANDLE ( -1 )
+
 hstack_t stack_new();
 void stack_free(const hstack_t stack);
 int stack_valid_handler(const hstack_t stack);
