@@ -3,7 +3,7 @@
 
 typedef int hstack_t;
 
-#define NSTACKS ( 16u )
+#define NSTACKS_MAX ( 16u )
 #define STACK_MAX_SIZE ( 32u )
 #define STACK_INVALID_HANDLE ( -1 )
 

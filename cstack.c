@@ -1,34 +1,38 @@
 #include "cstack.h"
-#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
 
 struct stack {
+
+    /* адрес базы стека */
     uint8_t* base;
+
+    /* адрес вершины стека */
     uint8_t* top;
 
+    /* количествово элементов (не байтов!) в стеке */
     size_t npush;
 
-    /* element size table */
-    /* NO -> element with NO size in nbytes */
+    /* таблица размеров элементов */
+    /* ставит в соответствие элементу его размер в байтах */
+    /* (el)ement (s)ize (t)able */
     size_t* elst;
 };
 
 struct {
-    struct stack* table[NSTACKS];
+    struct stack* table[NSTACKS_MAX];
 
 } stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t nfirst_free = NSTACKS;
+    size_t nfirst_free = NSTACKS_MAX;
 
-    for ( size_t i = 0u; i < NSTACKS; i++ ) {
+    for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
 
         if ( NULL == stack_table.table[i] ) {
             nfirst_free = i;
@@ -36,7 +40,7 @@ hstack_t stack_new( void ) {
         }
     }
 
-    if ( NSTACKS == nfirst_free ) {
+    if ( NSTACKS_MAX == nfirst_free ) {
         return STACK_INVALID_HANDLE;
     }
 
@@ -49,14 +53,17 @@ hstack_t stack_new( void ) {
     stack->base = calloc( 1, STACK_MAX_SIZE );
 
     if ( NULL == stack->base ) {
+        free( stack );
+
         return STACK_INVALID_HANDLE;
     }
 
     stack->elst = calloc( STACK_MAX_SIZE, sizeof( size_t ) );
 
     if ( NULL == stack->elst ) {
-
         free( stack->base );
+        free( stack );
+
         return STACK_INVALID_HANDLE;
     }
 
@@ -84,7 +91,7 @@ void stack_free( const hstack_t hstack ) {
 
 int stack_valid_handler( const hstack_t hstack ) {
 
-    if ( NSTACKS <= (unsigned)hstack ) {
+    if ( NSTACKS_MAX <= (unsigned)hstack ) {
         return 1;
     }
 
@@ -119,6 +126,12 @@ void stack_push( const hstack_t hstack, const void* buffer,
         return;
     }
 
+    const size_t nfreebytes = STACK_MAX_SIZE - stack_size( hstack );
+
+    if ( nfreebytes < bfsize ) {
+        return;
+    }
+
     struct stack* const stack = stack_table.table[hstack];
     const uint8_t* const source = buffer;
 
@@ -146,26 +159,26 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
         return 0u;
     }
 
-    const size_t size = stack->elst[stack->npush - 1];
+    const size_t elsize = stack->elst[stack->npush - 1];
 
-    if ( size > bfsize ) {
+    if ( elsize > bfsize ) {
         return 0u;
     }
 
-    uint8_t* start = stack->top - size + 1;
+    const uint8_t* const start = stack->top - elsize + 1;
     memcpy( buffer, start, bfsize );
 
-    stack->top -= size;
+    stack->top -= elsize;
     stack->elst[--stack->npush] = 0u;
 
-    return size;
+    return elsize;
 }
 
 #ifndef NDEBUG
 void stack_print( const hstack_t hstack ) {
 
     const struct stack* const stack = stack_table.table[hstack];
-    const size_t size = stack->top - stack->base + 1u;
+    const size_t size = stack_size( hstack );
 
     for ( size_t i = 0u; i < size; i++ ) {
         printf( "%x\n", stack->base[i] );
@@ -176,7 +189,7 @@ void stack_print( const hstack_t hstack ) {
 #ifndef NDEBUG
 void stack_table_print( void ) {
 
-    for ( size_t i = 0u; i < NSTACKS; i++ ) {
+    for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
         printf( "%p\n", (void*)stack_table.table[i] );
     }
 }
