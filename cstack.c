@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define UNUSED(VAR) (void)(VAR)
+#define RESERVED_HANDLER 0
+#define GROW_FACTOR 2
 
-struct node
-{
+struct node {
     struct node* prev;
     unsigned int size;
     char data[0];
@@ -14,61 +14,72 @@ struct node
 
 typedef struct node node_t;
 
-struct stack_entry
-{
-    unsigned int presence;
+struct stack_entry {
+    unsigned int present;
     unsigned int size;
     node_t* stack;
 };
 
 typedef struct stack_entry stack_entry_t;
 
-struct stack_entries_table
-{
+struct stack_entries_table {
     unsigned int size;
     unsigned int capacity;
-    unsigned const int grow_factor; // TODO name
     stack_entry_t* entries;
 };
 
-struct stack_entries_table g_table = {0u, 0u, 2u, NULL};
+struct stack_entries_table g_table = {0u, 0u, NULL};
+
+int init_g_table_entries() {
+    g_table.entries = calloc(GROW_FACTOR, sizeof(stack_entry_t));
+    if(!g_table.entries) {
+        return -1;
+    }
+    stack_entry_t reserved_stack = {1u, 0, NULL};
+    g_table.entries[RESERVED_HANDLER] = reserved_stack;
+    g_table.size = GROW_FACTOR - 1;
+    g_table.capacity = GROW_FACTOR;
+    return 0;
+}
 
 int resize_g_table() {
-    stack_entry_t* new_entries = NULL;
-    if (g_table.size == 0u) {
-        new_entries = calloc(g_table.grow_factor, sizeof(stack_entry_t));
-        if(!new_entries)
-            return -1;
-        g_table.capacity = g_table.grow_factor;
-    } else {
-        new_entries = calloc(g_table.grow_factor * g_table.capacity, sizeof(stack_entry_t));
-        if(!new_entries)
-            return -1;
-        memcpy(new_entries, g_table.entries, g_table.capacity * sizeof(stack_entry_t));
-        g_table.capacity = g_table.grow_factor * g_table.capacity;
-        free(g_table.entries);
+    stack_entry_t* new_entries = (stack_entry_t *) reallocarray(
+            g_table.entries,
+            GROW_FACTOR * g_table.capacity,
+            sizeof(stack_entry_t));
+    if(!new_entries) {
+        return -1;
     }
+    g_table.capacity *= GROW_FACTOR;
     g_table.entries = new_entries;
     return 0;
 }
 
-hstack_t stack_new()
-{
-    // TODO search of deleted stacks (private stack?)
-
-    if (g_table.size >= g_table.capacity) {
-        int flag = resize_g_table();
-        if (flag != 0)
-            return -1;
+hstack_t stack_new() {
+    if(!g_table.entries) {
+        init_g_table_entries();
     }
     stack_entry_t new_entry = {1u, 0,NULL};
+    if(stack_size(RESERVED_HANDLER) != 0) {
+        int idx;
+        unsigned int result_size = stack_pop(RESERVED_HANDLER, &idx, sizeof(idx));
+        if (result_size == sizeof(idx)) {
+            g_table.entries[idx] = new_entry;
+            return idx;
+        }
+    }
+    if (g_table.size >= g_table.capacity) {
+        int return_code = resize_g_table();
+        if (return_code != 0) {
+            return -1;
+        }
+    }
     g_table.entries[g_table.size] = new_entry;
     g_table.size++;
     return (int) g_table.size - 1;
 }
 
-void stack_free(const hstack_t hstack)
-{
+void stack_free(const hstack_t hstack) {
     if (stack_valid_handler(hstack) != 0) {
         return;
     }
@@ -80,69 +91,60 @@ void stack_free(const hstack_t hstack)
         new_head = new_head->prev;
         free(head);
     }
-    pStackEntry->presence = 0u;
+    stack_push(RESERVED_HANDLER, &hstack, sizeof(hstack));
+    pStackEntry->present = 0u;
     pStackEntry->size = 0u;
 }
 
-int stack_valid_handler(const hstack_t hstack)
-{
-    if (hstack >= 0 && hstack < (int)g_table.size && g_table.entries[hstack].presence == 1u) {
-        return 0;
-    }
-    return 1;
+int stack_valid_handler(const hstack_t hstack) {
+    return hstack < 0
+            || hstack >= (int)g_table.size
+            || g_table.entries[hstack].present == 0u
+            || hstack == RESERVED_HANDLER;
 }
 
-unsigned int stack_size(const hstack_t hstack)
-{
-    if (stack_valid_handler(hstack) == 0) {
-        return g_table.entries[hstack].size;
-    }
-    return 0;
+unsigned int stack_size(const hstack_t hstack) {
+    return (stack_valid_handler(hstack) == 0) ? g_table.entries[hstack].size : 0u;
 }
 
-void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
-{
+void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size) {
     if (!data_in || size == 0u || stack_valid_handler(hstack) != 0) {
         return;
     }
-    struct node* new_node = (struct node *) malloc(sizeof(struct node) + size);
+    node_t* new_node = (node_t *) malloc(sizeof(node_t) + size);
     if (!new_node) {
         return;
     }
     new_node->size = size;
     memcpy(new_node->data, data_in, size);
-
     stack_entry_t* pStackEntry = &g_table.entries[hstack];
-    if (stack_size(hstack) == 0)
-    {
+    if (pStackEntry->size == 0u) {
         new_node->prev = NULL;
-        pStackEntry->stack = new_node;
     } else {
         new_node->prev = pStackEntry->stack;
-        pStackEntry->stack = new_node;
     }
+    pStackEntry->stack = new_node;
     pStackEntry->size++;
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    if (data_out == 0 || size == 0u || stack_valid_handler(hstack) != 0) {
-        return 0;
+    if (data_out == NULL || size == 0u || stack_valid_handler(hstack) != 0) {
+        return 0u;
     }
     stack_entry_t* pStackEntry = &g_table.entries[hstack];
     if (pStackEntry->size == 0u) {
-        return 0;
-    }
-    node_t* head = pStackEntry->stack;
-    if (head->size <= size) {
-        unsigned int result_size = head->size;
-        memcpy(data_out, head->data, result_size);
-        pStackEntry->stack = head->prev;
-        free(head);
-        pStackEntry->size--;
-        return result_size;
-    } else {
         return 0u;
     }
+    node_t* head = pStackEntry->stack;
+    if (head->size > size) {
+        return 0u;
+    }
+    unsigned int result_size = head->size;
+    memcpy(data_out, head->data, result_size);
+    pStackEntry->stack = head->prev;
+    free(head);
+    pStackEntry->size--;
+    return result_size;
 }
 
