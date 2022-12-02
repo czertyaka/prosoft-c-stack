@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 typedef const struct node {
-    struct node* prev;
+    const struct node* prev;
     unsigned int node_number;
     unsigned int size;
     char data[0];
@@ -13,7 +13,7 @@ typedef const struct node {
 
 typedef struct top_node_table {
     unsigned short int reserved;
-    const node_t* p_top_node;
+    node_t* p_top_node;
 } stack_t;
 
 stack_t* handlers_table; 
@@ -48,7 +48,7 @@ void stack_free(const hstack_t hstack) {
     if (stack_valid_handler(hstack) == 1) {
         return;
     }
-    const node_t* top = handlers_table[hstack].p_top_node;
+    node_t* top = handlers_table[hstack].p_top_node;
     //checking for 0 element
     if (top == NULL) {
         handlers_table[hstack].reserved = 0;
@@ -79,9 +79,8 @@ int stack_valid_handler(const hstack_t hstack){
 
 unsigned int stack_size(const hstack_t hstack){   
     unsigned int size = 0;
-    const node_t* top = handlers_table[hstack].p_top_node;
-    if ((stack_valid_handler(hstack) == 0)&&(top != NULL)) {
-        size = top -> node_number;
+    if ((stack_valid_handler(hstack) == 0)&&(handlers_table[hstack].p_top_node != NULL)) {
+        size = handlers_table[hstack].p_top_node -> node_number;
         return size;
     }
     return size;
@@ -89,37 +88,37 @@ unsigned int stack_size(const hstack_t hstack){
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size) {     
     if ((stack_valid_handler(hstack) == 0)&&(data_in != NULL)&&(size >0)){
-        const node_t* p_prev = handlers_table[hstack].p_top_node; //saving pointer to prev element
+        node_t* p_prev = handlers_table[hstack].p_top_node; //saving pointer to prev element
         int new_node_number = 1;
         if (p_prev != NULL) {
             new_node_number = p_prev -> node_number + 1; //increment number of node
         }
         handlers_table[hstack].p_top_node = (node_t*) malloc(sizeof(node_t) + size);
-        const node_t* new_top = handlers_table[hstack].p_top_node;
+        node_t* new_top = handlers_table[hstack].p_top_node;
         if (new_top == NULL) { //checking for correct memory allocation
             return;
         }
-        new_top -> prev = p_prev;
-        new_top -> node_number = new_node_number;
-        new_top -> size = size;
-        char *data_out = new_top -> data;
-        memcpy(data_out, data_in, size);
+        ((struct node*)new_top) -> prev = p_prev;
+        *(unsigned int*)&new_top -> node_number = new_node_number;
+        *(unsigned int*)&new_top -> size = size;
+        const char *data_out = new_top -> data;
+        memcpy((void*)data_out, data_in, size);
     }
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
-{
-    const node_t* top = handlers_table[hstack].p_top_node;
-    if ((stack_valid_handler(hstack) == 0) //cheaking for correct input
-        &&(data_out != NULL)
-        &&(top != NULL)
+{   
+    if ((stack_valid_handler(hstack) == 0)
+        &&(data_out != NULL)//cheaking for correct input
+        &&(handlers_table[hstack].p_top_node != NULL)
         &&(size > 0)) {
-
+            
+        node_t* top = handlers_table[hstack].p_top_node;
         if (size >= top -> size) {
-            char *data_in = top -> data;
+            const char *data_in = top -> data;
             memcpy(data_out, data_in, top -> size);
             unsigned int result = top -> size;
-            const node_t* prev_node = top -> prev;
+            node_t* prev_node = top -> prev;
             free((void*)top);
             handlers_table[hstack].p_top_node = prev_node;
             return result;
