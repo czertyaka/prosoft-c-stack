@@ -7,7 +7,7 @@
 #define GROW_FACTOR 2
 
 struct node {
-    struct node* prev;
+    const struct node* prev;
     unsigned int size;
     char data[0];
 };
@@ -31,7 +31,7 @@ struct stack_entries_table {
 struct stack_entries_table g_table = {0u, 0u, NULL};
 
 int init_g_table_entries() {
-    g_table.entries = calloc(GROW_FACTOR, sizeof(stack_entry_t));
+    g_table.entries = (stack_entry_t*) calloc(GROW_FACTOR, sizeof(stack_entry_t));
     if(!g_table.entries) {
         return -1;
     }
@@ -43,7 +43,7 @@ int init_g_table_entries() {
 }
 
 int resize_g_table() {
-    stack_entry_t* new_entries = (stack_entry_t *) reallocarray(
+    stack_entry_t* new_entries = (stack_entry_t*) reallocarray(
             g_table.entries,
             GROW_FACTOR * g_table.capacity,
             sizeof(stack_entry_t));
@@ -84,12 +84,12 @@ void stack_free(const hstack_t hstack) {
         return;
     }
     stack_entry_t* pStackEntry = &g_table.entries[hstack];
-    node_t* new_head = pStackEntry->stack;
-    node_t* head;
+    const node_t* new_head = pStackEntry->stack;
+    const node_t* head;
     while(new_head) {
         head = new_head;
         new_head = new_head->prev;
-        free(head);
+        free((void *)head);
     }
     stack_push(RESERVED_HANDLER, &hstack, sizeof(hstack));
     pStackEntry->present = 0u;
@@ -141,7 +141,7 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
     }
     unsigned int result_size = head->size;
     memcpy(data_out, head->data, result_size);
-    pStackEntry->stack = head->prev;
+    pStackEntry->stack = (node_t *) head->prev;
     free(head);
     pStackEntry->size--;
     return result_size;
