@@ -17,9 +17,9 @@ struct node_t
 typedef struct stack_head_t stack_head;
 struct stack_head_t
 {
-    node* head_pointer;
-    unsigned int size;
-    int is_free;
+    node* head_pointer ;
+    unsigned int size ;
+    int is_free ;
 };
 
 

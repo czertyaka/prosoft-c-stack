@@ -11,17 +11,19 @@ enum
     true
 };
 
-stack_head stacks_head[_MAX_STACKS] = {{((void *)0), 0, true}};
+stack_head stacks_head[_MAX_STACKS] = { [0 ... _MAX_STACKS-1].is_free = true}; // work only for gcc
+
 
 hstack_t stack_new()
 {
     for (int id = 0; id < _MAX_STACKS; id++)
+    {
         if (stacks_head[id].is_free)
         {
             stacks_head[id].is_free = false;
             return id;
         }
-
+    }
     printf("There are no free staks! \nMaximum number of stacks: %d.\n", _MAX_STACKS);
     return -1;
 }
@@ -76,7 +78,8 @@ int stack_push(const hstack_t stack_id, const void *data_in, const unsigned int 
         return 0;
     if (data_in == NULL)
         return 0;
-
+    if (size == 0)
+        return 0;
 
     node *new_node = malloc(sizeof(node));
     if (new_node == NULL)
@@ -108,7 +111,8 @@ unsigned int stack_pop(const hstack_t stack_id, void *data_out, const unsigned i
     if (stacks_head[stack_id].size == 0)
         return 0;
 
-    memcpy(data_out, stacks_head[stack_id].head_pointer->data, size);
+    memcpy(data_out, stacks_head[stack_id].head_pointer->data, stacks_head[stack_id].head_pointer->size);
+    unsigned int writen_size = stacks_head[stack_id].head_pointer->size;
 
     free(stacks_head[stack_id].head_pointer->data);
     node *temp = stacks_head[stack_id].head_pointer;
@@ -116,5 +120,5 @@ unsigned int stack_pop(const hstack_t stack_id, void *data_out, const unsigned i
     stacks_head[stack_id].size -= 1;
     free(temp);
 
-    return 1;
+    return writen_size;
 }
