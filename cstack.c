@@ -127,8 +127,7 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
     pStackEntry->size++;
 }
 
-unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
-{
+unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size) {
     if (data_out == NULL || size == 0u || stack_valid_handler(hstack) != 0) {
         return 0u;
     }
