@@ -1,12 +1,29 @@
 #include "cstack.h"
 #include <stddef.h>
-
+#include <stdlib.h>
 #define UNUSED(VAR) (void)(VAR)
+
 
 hstack_t stack_new()
 {
+    if (entries == 0)
+    {
+  	  staks = stack_new();    
+      entries = 1;
+    }
+
+    node* zero_node = malloc(sizeof(node));
+    zero_node->data = NULL;
+    zero_node->prev = NULL;
+    zero_node->size = 0;
+
+    stack_push(staks,zero_node,sizeof(zero_node));
+    entries = entries+1;
+
+    
     return -1;
 }
+
 
 void stack_free(const hstack_t hstack)
 {
