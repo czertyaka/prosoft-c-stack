@@ -56,4 +56,4 @@ endfunction()
 add_homework(default .)
 add_homework(MyxaWanyuha)
 add_homework(ninjechka)
-
+add_homework(smith-user)
