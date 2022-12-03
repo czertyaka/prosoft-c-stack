@@ -30,17 +30,17 @@ struct {
 } stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t nfirst_free = NSTACKS_MAX;
+    size_t first_free = NSTACKS_MAX;
 
     for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
 
         if ( NULL == stack_table.table[i] ) {
-            nfirst_free = i;
+            first_free = i;
             break;
         }
     }
 
-    if ( NSTACKS_MAX == nfirst_free ) {
+    if ( NSTACKS_MAX == first_free ) {
         return STACK_INVALID_HANDLE;
     }
 
@@ -50,7 +50,7 @@ hstack_t stack_new( void ) {
         return STACK_INVALID_HANDLE;
     }
 
-    stack->base = calloc( 1, STACK_MAX_SIZE );
+    stack->base = calloc( 1u, STACK_MAX_SIZE );
 
     if ( NULL == stack->base ) {
         free( stack );
@@ -69,9 +69,9 @@ hstack_t stack_new( void ) {
 
     stack->top = stack->base;
     stack->npush = 0u;
-    stack_table.table[nfirst_free] = stack;
+    stack_table.table[first_free] = stack;
 
-    return nfirst_free;
+    return first_free;
 }
 
 void stack_free( const hstack_t hstack ) {

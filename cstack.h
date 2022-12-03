@@ -1,11 +1,11 @@
 #ifndef CSTACK_H
 #define CSTACK_H
 
-typedef int hstack_t;
-
 #define NSTACKS_MAX ( 16u )
 #define STACK_MAX_SIZE ( 32u )
 #define STACK_INVALID_HANDLE ( -1 )
+
+typedef int hstack_t;
 
 hstack_t stack_new();
 void stack_free(const hstack_t stack);

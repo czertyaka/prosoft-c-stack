@@ -7,9 +7,9 @@ include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${GMOCK_INCLUDE_DIRS})
 
 # compilation flags
-set(COMMON_FLAGS "-Wall -Wextra -Wformat -Wformat-security -Werror")
+set(COMMON_FLAGS "-Wall -Wextra -Wpedantic -Wformat -Wformat-security -Werror")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS} -fsanitize=undefined -fsanitize=address")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${COMMON_FLAGS}")
 
 # build library
 add_library(cstack STATIC cstack.c)
