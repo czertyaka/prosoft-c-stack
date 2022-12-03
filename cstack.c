@@ -123,7 +123,11 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
     node_t* New_Top_Stack = (node_t*) malloc(sizeof(node_t) + sizeof(Top_Stack->size));
     
     New_Top_Stack->size = size;
-    memcpy(New_Top_Stack->data,data_in,size);
+
+    void* data = (void*)malloc(size);
+    //memcpy(New_Top_Stack->data,data_in,size);
+    memcpy(data,data_in,size);
+    New_Top_Stack->data = data;
 
     New_Top_Stack->prev = Top_Stack;
     g_table.entries[hstack].top_stack = New_Top_Stack;
@@ -138,7 +142,7 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
    }
 
    node_t* Pointer_Top_Stack = g_table.entries[hstack].top_stack;
-   g_table.entries[hstack].top_stack = Pointer_Top_Stack->prev;
+   g_table.entries[hstack].top_stack = (node_t*)Pointer_Top_Stack->prev;
 
    memcpy(data_out,Pointer_Top_Stack->data,size);
    int result = size;
