@@ -39,3 +39,4 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
     UNUSED(size);
     return 0;
 }
+
