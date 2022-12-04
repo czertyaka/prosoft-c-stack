@@ -30,16 +30,19 @@ struct stack_entries_table {
 
 struct stack_entries_table g_table = {0u, 0u, NULL};
 
-int init_g_table_entries() {
+int alloc_g_table_entries() {
     g_table.entries = (stack_entry_t*) calloc(GROW_FACTOR, sizeof(stack_entry_t));
     if(!g_table.entries) {
         return -1;
     }
-    stack_entry_t reserved_stack = {1u, 0, NULL};
-    g_table.entries[RESERVED_HANDLER] = reserved_stack;
-    g_table.size = GROW_FACTOR - 1;
     g_table.capacity = GROW_FACTOR;
     return 0;
+}
+
+void init_reserved_stack() {
+    stack_entry_t reserved_stack = {1u, 0, NULL};
+    g_table.entries[RESERVED_HANDLER] = reserved_stack;
+    g_table.size++;
 }
 
 int resize_g_table() {
@@ -57,7 +60,8 @@ int resize_g_table() {
 
 hstack_t stack_new() {
     if(!g_table.entries) {
-        init_g_table_entries();
+        alloc_g_table_entries();
+        init_reserved_stack();
     }
     stack_entry_t new_entry = {1u, 0,NULL};
     if(stack_size(RESERVED_HANDLER) != 0) {
@@ -69,8 +73,7 @@ hstack_t stack_new() {
         }
     }
     if (g_table.size >= g_table.capacity) {
-        int return_code = resize_g_table();
-        if (return_code != 0) {
+        if (resize_g_table() != 0) {
             return -1;
         }
     }
