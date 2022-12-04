@@ -1,9 +1,7 @@
 #ifndef CSTACK_H
 #define CSTACK_H
 
-
 typedef int hstack_t;
- 
 
 hstack_t stack_new();
 void stack_free(const hstack_t stack);
