@@ -4,6 +4,26 @@
 #include <stdio.h>
 #include <string.h>
 
+#define _MAX_STACKS 16
+
+typedef struct node_t node;
+struct node_t
+{
+    node* prev;
+    void* data;
+    unsigned int size;
+};
+
+
+typedef struct stack_head_t stack_head;
+struct stack_head_t
+{
+    node* head_pointer ;
+    unsigned int size ;
+    int is_free ;
+};
+
+
 typedef int bool_in_c;
 enum
 {
@@ -70,24 +90,24 @@ unsigned int stack_size(const hstack_t stack_id)
     return stacks_head[stack_id].size;
 }
 
-int stack_push(const hstack_t stack_id, const void *data_in, const unsigned int size)
+void stack_push(const hstack_t stack_id, const void *data_in, const unsigned int size)
 {
     if (stack_id > _MAX_STACKS || stack_id < 0)
-        return 0;
+        return ;
     if (stacks_head[stack_id].is_free)
-        return 0;
+        return ;
     if (data_in == NULL)
-        return 0;
+        return ;
     if (size == 0)
-        return 0;
+        return ;
 
     node *new_node = malloc(sizeof(node));
     if (new_node == NULL)
-        return 0;
+        return ;
 
     new_node->data = malloc(size);
     if (new_node->data == NULL)
-        return 0;
+        return ;
     new_node->size = size;
 
     memcpy(new_node->data, data_in, size);
@@ -95,7 +115,7 @@ int stack_push(const hstack_t stack_id, const void *data_in, const unsigned int 
     new_node->prev = stacks_head[stack_id].head_pointer;
     stacks_head[stack_id].head_pointer = new_node;
     stacks_head[stack_id].size += 1;
-    return 1;
+    return ;
 }
 
 unsigned int stack_pop(const hstack_t stack_id, void *data_out, const unsigned int size)
