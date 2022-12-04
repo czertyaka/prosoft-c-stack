@@ -30,17 +30,17 @@ struct {
 } stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t first_free = NSTACKS_MAX;
+    size_t ifirst_free = NSTACKS_MAX;
 
     for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
 
         if ( NULL == stack_table.table[i] ) {
-            first_free = i;
+            ifirst_free = i;
             break;
         }
     }
 
-    if ( NSTACKS_MAX == first_free ) {
+    if ( NSTACKS_MAX == ifirst_free ) {
         return STACK_INVALID_HANDLE;
     }
 
@@ -69,9 +69,9 @@ hstack_t stack_new( void ) {
 
     stack->top = stack->base;
     stack->npush = 0u;
-    stack_table.table[first_free] = stack;
+    stack_table.table[ifirst_free] = stack;
 
-    return first_free;
+    return ifirst_free;
 }
 
 void stack_free( const hstack_t hstack ) {
@@ -133,12 +133,13 @@ void stack_push( const hstack_t hstack, const void* buffer,
     }
 
     struct stack* const stack = stack_table.table[hstack];
-    const uint8_t* const source = buffer;
 
-    uint8_t* push_start = stack->top + ( stack->top != stack->base );
-    memcpy( push_start, source, bfsize );
+    const int stack_empty = 0u != stack->npush;
+    uint8_t* const push_start = stack->top + stack_empty;
 
-    stack->top += bfsize - ( stack->top == stack->base );
+    memcpy( push_start, buffer, bfsize );
+
+    stack->top += bfsize - !stack_empty;
     stack->elst[stack->npush++] = bfsize;
 }
 
@@ -165,10 +166,10 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
         return 0u;
     }
 
-    const uint8_t* const start = stack->top - elsize + 1;
-    memcpy( buffer, start, bfsize );
+    uint8_t* const new_top = stack->top - elsize;
+    memcpy( buffer, new_top + 1, bfsize );
 
-    stack->top -= elsize;
+    stack->top = new_top;
     stack->elst[--stack->npush] = 0u;
 
     return elsize;
