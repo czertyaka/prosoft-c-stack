@@ -41,7 +41,7 @@ function(add_homework name)
 
     # compilation flags
     if (MSVC)
-        set(MSVC_FLAGS /Wall /WX)
+        set(MSVC_FLAGS /Wall)
         target_compile_options(${CSTACK_LIB} PRIVATE ${MSVC_FLAGS})
         target_link_options(${CSTACK_LIB} PRIVATE ${MSVC_FLAGS})
     else()
