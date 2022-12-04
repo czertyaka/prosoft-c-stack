@@ -60,7 +60,9 @@ int resize_g_table() {
 
 hstack_t stack_new() {
     if(!g_table.entries) {
-        alloc_g_table_entries();
+        if(alloc_g_table_entries() != 0) {
+            return -1;
+        }
         init_reserved_stack();
     }
     stack_entry_t new_entry = {1u, 0,NULL};
