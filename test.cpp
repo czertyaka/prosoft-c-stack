@@ -124,3 +124,14 @@ TEST_F(ModifyTests, SeveralPushPop)
     EXPECT_THAT(data_out, ::testing::ElementsAre(2, 1, 0));
 }
 
+TEST(AllAPITest, InfiniteLoop)
+{
+    int a = 4;
+    while (a--)
+    {
+        hstack_t stack = stack_new();
+        stack_free(stack);
+        usleep(10);
+    }
+}
+

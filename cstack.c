@@ -8,7 +8,6 @@
 #define freed_stack_size -1
 #define start_stack_i -1
 #define error_code_stack_new -1
-#define error_code 
 #define stack_valid_code 0
 #define stack_invalid_code 1
 
@@ -54,10 +53,25 @@ hstack_t stack_new()
             printf("Something went wrong at stage of creating stack_table_t\n");
             return error_code_stack_new;
         }
+        else
+        {
+            printf("Stack table allocation went ok!\n");
+        }
     }
     //check if this stack exceeds reserved number of stacks
     else if(g_table.last_stack_i == (g_table.reserved_size - 1))
     {
+        //check for freed stack handlers that could be used to create new ones
+        for (int i = 0; i <= g_table.last_stack_i; i++){
+            //search for freed stack
+            if(g_table.table[i].stack_size == freed_stack_size)
+            {
+                g_table.table[i].stack_size = 0;
+                return i;
+            }
+        }
+
+        
         //double the reserved size in g_table
         g_table.reserved_size = g_table.reserved_size * 2;
         g_table.table = (stack_t*)realloc(g_table.table, g_table.reserved_size * sizeof(stack_t));
@@ -68,6 +82,10 @@ hstack_t stack_new()
         {
             printf("Something went wrong at stage of extending stack_table_t\n");
             return error_code_stack_new;
+        }
+        else
+        {
+            printf("Stack table reallocation went ok!\n");
         }
     }
     //adding new stack to stack_size counter
@@ -120,21 +138,25 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
         && (data_in != NULL) && (size > 0))
     {
         //create new node
-        node_t* temp_p = (node_t*)malloc(sizeof(node_t) + sizeof(char) * size);
+        node_t* new_node = (node_t*)malloc(sizeof(node_t) + sizeof(char) * size);
 
 
         //check NULL pointer
-        if(temp_p == NULL)
+        if(new_node == NULL)
         {
             printf("Couldn't push new value because of memory error\n");
             return;
         }
+        else
+        {
+            printf("Pushed new value successfully!\n");
+        }
         //fill variables of new node
-        temp_p->size = size;
-        temp_p->prev = g_table.table[hstack].top;
-        memcpy(temp_p->data, data_in, size);
+        new_node->size = size;
+        new_node->prev = g_table.table[hstack].top;
+        memcpy(new_node->data, data_in, size);
         //change the stack variables
-        g_table.table[hstack].top = temp_p;
+        g_table.table[hstack].top = new_node;
         g_table.table[hstack].stack_size++;
     }
 }
@@ -146,16 +168,16 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
         && (size >= g_table.table[hstack].top->size)
         && (data_out != NULL))
     {
-        node_t* temp_top = g_table.table[hstack].top;
-        node_t* temp_prev = temp_top->prev;
+        node_t* top = g_table.table[hstack].top;
+        node_t* prev = top->prev;
         //change the data inside the stack
-        g_table.table[hstack].top = temp_prev;
+        g_table.table[hstack].top = prev;
         g_table.table[hstack].stack_size--;
         //copy data in data_out
-        unsigned int size_to_transfer = temp_top->size; 
-        memcpy(data_out, temp_top->data, size_to_transfer);
+        unsigned int size_to_transfer = top->size; 
+        memcpy(data_out, top->data, size_to_transfer);
         //delete all data from temp_top
-        free(temp_top);
+        free(top);
         return size_to_transfer;
     }
     return 0;
