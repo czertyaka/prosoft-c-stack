@@ -1,8 +1,8 @@
 #include "cstack.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
