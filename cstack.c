@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -134,12 +135,12 @@ void stack_push( const hstack_t hstack, const void* buffer,
 
     struct stack* const stack = stack_table.table[hstack];
 
-    const int stack_empty = 0u != stack->npush;
-    uint8_t* const push_start = stack->top + stack_empty;
+    const bool stack_empty = 0u == stack->npush;
+    uint8_t* const push_start = stack->top + !stack_empty;
 
     memcpy( push_start, buffer, bfsize );
 
-    stack->top += bfsize - !stack_empty;
+    stack->top += bfsize - stack_empty;
     stack->elst[stack->npush++] = bfsize;
 }
 
