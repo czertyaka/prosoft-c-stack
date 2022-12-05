@@ -171,3 +171,27 @@ TEST_F( ModifyTests, StringTest ) {
     EXPECT_THAT( data_out, ::testing::ElementsAre( 'T', 'e', 's', 't', '\0',
                                                    '\0', '\0', '\0' ) );
 }
+
+TEST_F( ModifyTests, SeveralStringsTest ) {
+    const size_t nstr{ 3u };
+    const size_t len_max{ 32u };
+
+    const char data_in[nstr][len_max] = { "Hello world", "Test", "Prosoft" };
+    char data_out[nstr][len_max];
+
+    for ( size_t i{ 0u }; i < nstr; i++ ) {
+        memset( data_out[i], '\0', len_max );
+    }
+
+    for ( size_t i{ 0u }; i < nstr; i++ ) {
+        stack_push( stack, data_in[i], strlen( data_in[i] ) );
+    }
+
+    for ( size_t i{ 0u }; i < nstr; i++ ) {
+        stack_pop( stack, data_out[i], strlen( data_in[nstr - 1 - i] ) );
+    }
+
+    for ( size_t i{ 0u }; i < nstr; i++ ) {
+        EXPECT_TRUE( 0 == strcmp( data_in[i], data_out[nstr - 1 - i] ) );
+    }
+}

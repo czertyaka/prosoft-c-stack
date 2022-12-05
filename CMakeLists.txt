@@ -8,7 +8,7 @@ include_directories(${GMOCK_INCLUDE_DIRS})
 
 # compilation flags
 set(COMMON_FLAGS "-Wall -Wextra -Wpedantic -Wformat -Wformat-security -Werror")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS} -fsanitize=undefined -fsanitize=address")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS} -std=c++11 -fsanitize=undefined -fsanitize=address")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${COMMON_FLAGS}")
 
 # build library
