@@ -113,12 +113,12 @@ TEST_F( ModifyTests, SeveralPushPop ) {
 }
 
 TEST_F( ModifyTests, SinglePushPopLargeNumbers ) {
+
     const size_t nelem{ 7u };
     const int data_in[nelem]{ INT_MAX, INT8_MAX,  INT8_MIN, INT_MIN,
                               INT_MAX, INT16_MIN, INT16_MAX };
 
-    int data_out[nelem];
-    memset( data_out, '\0', sizeof( data_out ) );
+    int data_out[nelem]{ '\0' };
 
     stack_push( stack, data_in, sizeof( data_in ) );
     stack_pop( stack, data_out, sizeof( data_out ) );
@@ -129,18 +129,20 @@ TEST_F( ModifyTests, SinglePushPopLargeNumbers ) {
 }
 
 TEST_F( ModifyTests, SeveralPushPopLargeNumbers ) {
-    const size_t nelem{ 3u };
-    const int data_in[nelem]{ INT_MAX, INT_MIN, INT_MAX };
 
-    int data_out[nelem];
-    memset( data_out, '\0', sizeof( data_out ) );
+    const size_t nelem{ 3u };
+
+    const int data_in[nelem]{ INT_MAX, INT_MIN, INT_MAX };
+    int data_out[nelem]{ '\0' };
 
     for ( size_t i{ 0u }; i < nelem; ++i ) {
+
         stack_push( stack, &data_in[i], sizeof( data_in[i] ) );
         EXPECT_EQ( stack_size( stack ), i + 1u );
     }
 
     for ( size_t i{ 0u }; i < nelem; ++i ) {
+
         EXPECT_EQ( stack_pop( stack, &data_out[i], sizeof( data_out[i] ) ),
                    sizeof( data_out[i] ) );
         EXPECT_EQ( stack_size( stack ), nelem - 1u - i );
@@ -151,11 +153,9 @@ TEST_F( ModifyTests, SeveralPushPopLargeNumbers ) {
 }
 
 TEST_F( ModifyTests, EmptyStringTest ) {
-    char data_in[8u];
-    memset( data_in, '\0', sizeof( data_in ) );
 
-    char data_out[16u];
-    memset( data_out, '\0', sizeof( data_out ) );
+    char data_in[8u]{ '\0' };
+    char data_out[16u]{ '\0' };
 
     stack_push( stack, data_in, sizeof( data_in ) );
     stack_pop( stack, data_out, sizeof( data_out ) );
@@ -167,10 +167,9 @@ TEST_F( ModifyTests, EmptyStringTest ) {
 }
 
 TEST_F( ModifyTests, StringTest ) {
-    const char data_in[]{ "Test" };
 
-    char data_out[8u];
-    memset( data_out, '\0', sizeof( data_out ) );
+    const char data_in[]{ "Test" };
+    char data_out[8u]{ '\0' };
 
     stack_push( stack, data_in, sizeof( data_in ) );
     stack_pop( stack, data_out, sizeof( data_out ) );
@@ -180,10 +179,11 @@ TEST_F( ModifyTests, StringTest ) {
 }
 
 TEST_F( ModifyTests, SeveralStringsTest ) {
+
     const size_t nstr{ 3u }, len_max{ 32u };
 
     const char data_in[nstr][len_max]{ "Hello world", "Test", "Prosoft" };
-    char data_out[nstr][len_max];
+    char data_out[nstr][len_max]{ '\0' };
 
     for ( size_t i{ 0u }; i < nstr; i++ ) {
         memset( data_out[i], '\0', len_max );

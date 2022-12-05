@@ -26,14 +26,14 @@ struct stack {
 };
 
 struct {
-    struct stack* table[NSTACKS_MAX];
+    struct stack* table[NSTACKS];
 
 } stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t ifirst_free = NSTACKS_MAX;
+    size_t ifirst_free = NSTACKS;
 
-    for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
+    for ( size_t i = 0u; i < NSTACKS; i++ ) {
 
         if ( NULL == stack_table.table[i] ) {
             ifirst_free = i;
@@ -41,7 +41,7 @@ hstack_t stack_new( void ) {
         }
     }
 
-    if ( NSTACKS_MAX == ifirst_free ) {
+    if ( NSTACKS == ifirst_free ) {
         return STACK_INVALID_HANDLE;
     }
 
@@ -51,7 +51,7 @@ hstack_t stack_new( void ) {
         return STACK_INVALID_HANDLE;
     }
 
-    stack->base = calloc( 1u, STACK_MAX_SIZE );
+    stack->base = calloc( 1u, STACK_CAPACITY );
 
     if ( NULL == stack->base ) {
         free( stack );
@@ -59,7 +59,7 @@ hstack_t stack_new( void ) {
         return STACK_INVALID_HANDLE;
     }
 
-    stack->elst = calloc( STACK_MAX_SIZE, sizeof( size_t ) );
+    stack->elst = calloc( STACK_CAPACITY, sizeof( size_t ) );
 
     if ( NULL == stack->elst ) {
         free( stack->base );
@@ -92,7 +92,7 @@ void stack_free( const hstack_t hstack ) {
 
 int stack_valid_handler( const hstack_t hstack ) {
 
-    if ( NSTACKS_MAX <= (unsigned)hstack ) {
+    if ( NSTACKS <= (unsigned)hstack ) {
         return 1;
     }
 
@@ -123,11 +123,11 @@ void stack_push( const hstack_t hstack, const void* buffer,
         return;
     }
 
-    if ( bfsize > STACK_MAX_SIZE ) {
+    if ( bfsize > STACK_CAPACITY ) {
         return;
     }
 
-    const size_t nfreebytes = STACK_MAX_SIZE - stack_size( hstack );
+    const size_t nfreebytes = STACK_CAPACITY - stack_size( hstack );
 
     if ( nfreebytes < bfsize ) {
         return;
@@ -191,7 +191,7 @@ void stack_print( const hstack_t hstack ) {
 #ifndef NDEBUG
 void stack_table_print( void ) {
 
-    for ( size_t i = 0u; i < NSTACKS_MAX; i++ ) {
+    for ( size_t i = 0u; i < NSTACKS; i++ ) {
         printf( "%p\n", (void*)stack_table.table[i] );
     }
 }

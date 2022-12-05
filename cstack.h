@@ -1,8 +1,8 @@
 #ifndef CSTACK_H
 #define CSTACK_H
 
-#define NSTACKS_MAX ( 16u )
-#define STACK_MAX_SIZE ( 32u )
+#define NSTACKS ( 16u )
+#define STACK_CAPACITY ( 32u )
 #define STACK_INVALID_HANDLE ( -1 )
 
 typedef int hstack_t;
