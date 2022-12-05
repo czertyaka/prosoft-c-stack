@@ -180,9 +180,9 @@ unsigned int stack_pop( const hstack_t hstack, void* buffer,
 void stack_print( const hstack_t hstack ) {
 
     const struct stack* const stack = stack_table.table[hstack];
-    const size_t size = stack_size( hstack );
+    const size_t nelem = stack_size( hstack );
 
-    for ( size_t i = 0u; i < size; i++ ) {
+    for ( size_t i = 0u; i < nelem; i++ ) {
         printf( "%x\n", stack->base[i] );
     }
 }
