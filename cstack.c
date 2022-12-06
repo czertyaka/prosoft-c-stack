@@ -16,7 +16,7 @@ struct stack {
     /* адрес вершины стека */
     uint8_t* top;
 
-    /* количествово элементов (не байтов!) в стеке */
+    /* количество элементов (не байтов!) в стеке */
     size_t npush;
 
     /* таблица размеров элементов */
@@ -31,21 +31,23 @@ struct {
 } stack_table = { .table = NULL };
 
 hstack_t stack_new( void ) {
-    size_t ifirst_free = NSTACKS;
 
-    for ( size_t i = 0u; i < NSTACKS; i++ ) {
+    bool free_found = false;
+    size_t ifirst_free = 0u;
 
-        if ( NULL == stack_table.table[i] ) {
-            ifirst_free = i;
+    for ( ; ifirst_free < NSTACKS; ifirst_free++ ) {
+
+        if ( NULL == stack_table.table[ifirst_free] ) {
+            free_found = true;
             break;
         }
     }
 
-    if ( NSTACKS == ifirst_free ) {
+    if ( !free_found ) {
         return STACK_INVALID_HANDLE;
     }
 
-    struct stack* const stack = malloc( sizeof( struct stack ) );
+    struct stack* const stack = calloc( 1u, sizeof( struct stack ) );
 
     if ( NULL == stack ) {
         return STACK_INVALID_HANDLE;
