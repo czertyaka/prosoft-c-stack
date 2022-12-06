@@ -202,20 +202,20 @@ TEST_F( ModifyTests, SeveralStringsTest ) {
     }
 }
 
-TEST(AllocationTests, TooManyStacks) {
+TEST( AllocationTests, TooManyStacks ) {
 
     const size_t nstacks{ 16u };
     hstack_t stack[nstacks]{ 0 };
 
-    for (size_t i{0u}; i < nstacks; i++) {
+    for ( size_t i{ 0u }; i < nstacks; i++ ) {
 
         stack[i] = stack_new();
-        EXPECT_TRUE(0 <= stack[i]);
+        EXPECT_TRUE( 0 <= stack[i] );
     }
 
-    EXPECT_TRUE(0 > stack_new());
+    EXPECT_TRUE( 0 > stack_new() );
 
-    for (size_t i{0u}; i < nstacks; i++) {
-        stack_free(stack[i]);
+    for ( size_t i{ 0u }; i < nstacks; i++ ) {
+        stack_free( stack[i] );
     }
 }
