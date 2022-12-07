@@ -1,9 +1,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <string.h>
 
 extern "C" {
 #include "cstack.h"
+#include <string.h>
 }
 
 TEST( AllAPITest, BadStackHandler ) {
@@ -114,11 +114,11 @@ TEST_F( ModifyTests, SeveralPushPop ) {
 
 TEST_F( ModifyTests, SinglePushPopLargeNumbers ) {
 
-    const size_t nelem{ 7u };
+    constexpr size_t nelem{ 7u };
     const int data_in[nelem]{ INT_MAX, INT8_MAX,  INT8_MIN, INT_MIN,
                               INT_MAX, INT16_MIN, INT16_MAX };
 
-    int data_out[nelem]{ '\0' };
+    int data_out[nelem]{ 0 };
 
     stack_push( stack, data_in, sizeof( data_in ) );
     stack_pop( stack, data_out, sizeof( data_out ) );
@@ -130,10 +130,10 @@ TEST_F( ModifyTests, SinglePushPopLargeNumbers ) {
 
 TEST_F( ModifyTests, SeveralPushPopLargeNumbers ) {
 
-    const size_t nelem{ 3u };
+    constexpr size_t nelem{ 3u };
 
     const int data_in[nelem]{ INT_MAX, INT_MIN, INT_MAX };
-    int data_out[nelem]{ '\0' };
+    int data_out[nelem]{ 0 };
 
     for ( size_t i{ 0u }; i < nelem; ++i ) {
 
@@ -180,7 +180,7 @@ TEST_F( ModifyTests, StringTest ) {
 
 TEST_F( ModifyTests, SeveralStringsTest ) {
 
-    const size_t nstr{ 3u }, len_max{ 32u };
+    constexpr size_t nstr{ 3u }, len_max{ 32u };
 
     const char data_in[nstr][len_max]{ "Hello world", "Test", "Prosoft" };
     char data_out[nstr][len_max]{ '\0' };
@@ -204,18 +204,26 @@ TEST_F( ModifyTests, SeveralStringsTest ) {
 
 TEST( AllocationTests, TooManyStacks ) {
 
-    const size_t nstacks{ 16u };
+    constexpr size_t nstacks{ 16u };
     hstack_t stack[nstacks]{ 0 };
+
+    for ( size_t i{ 0u }; i < nstacks; i++ ) {
+        stack[i] = STACK_INVALID_HANDLE;
+    }
 
     for ( size_t i{ 0u }; i < nstacks; i++ ) {
 
         stack[i] = stack_new();
-        EXPECT_TRUE( 0 <= stack[i] );
+
+        EXPECT_TRUE( STACK_INVALID_HANDLE != stack[i] );
+        EXPECT_TRUE( 0 == stack_valid_handler( stack[i] ) );
     }
 
-    EXPECT_TRUE( 0 > stack_new() );
+    EXPECT_TRUE( STACK_INVALID_HANDLE == stack_new() );
 
     for ( size_t i{ 0u }; i < nstacks; i++ ) {
+
         stack_free( stack[i] );
+        EXPECT_TRUE( 0 != stack_valid_handler( stack[i] ) );
     }
 }
