@@ -10,7 +10,7 @@
 //i<<I стеков (к примеру, было создано 100 стеков, 95 конечных
 //было освобождено, обслуживается 5 первых (g_table.size == 5),
 //хотя реаллоцировано памяти для g_table.entries все еще на все 100)
-static unsigned int handler_max;
+static int handler_max;
 
 struct node
 {
@@ -53,7 +53,7 @@ hstack_t stack_new(void)
 
     //проверка на наличие незарезервированных хендлеров; на 1 цикле
     //1-й стек еще не зарезервирован, здесь ему присваивается хендлер 0
-    for (int i = 0; i <= (int)handler_max; ++i)
+    for (int i = 0; i <= handler_max; ++i)
     {
         if (!g_table.entries[i].reserved)
         {
@@ -66,8 +66,8 @@ hstack_t stack_new(void)
     //для остальных новых стеков реаллоцируем память
     if (!reserved_exist)
     {
-        handler_max += 1u;
-        handler = (int)handler_max;
+        ++handler_max;
+        handler = handler_max;
         g_table.entries = (stack_entry_t*)realloc(g_table.entries, (handler_max+1) * sizeof(stack_entry_t));
         if (g_table.entries == NULL)
             return -1;
@@ -81,7 +81,7 @@ hstack_t stack_new(void)
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    if (hstack <0 || hstack > (int)handler_max || g_table.size == 0u)
+    if (hstack <0 || hstack > handler_max || g_table.size == 0u)
         return 1;
 
     if (g_table.entries[hstack].reserved == RESERVED)
@@ -108,11 +108,11 @@ void stack_free(const hstack_t hstack)
 
     //находим хендлер, на котором кол-во зарезервированных стеков count
     //становится равным размеру g_table.size, если g_table.size и handler_max не совпадают
-    if (g_table.size <= handler_max)
+    if (g_table.size <= (unsigned int)handler_max)
     {
-        unsigned int handler;
+        int handler;
         unsigned int count = 0u;
-        for (handler = 0u; handler <= handler_max; ++handler)
+        for (handler = 0; handler <= handler_max; ++handler)
         {
             if (g_table.entries[handler].reserved == 1)
             {
@@ -126,16 +126,16 @@ void stack_free(const hstack_t hstack)
         //реаллоцируем память под handler+1 (с учетом нулевого) обслуживаемых стеков
         if (handler < handler_max)
         {
-            stack_entry_t *rewrite_entries = (stack_entry_t *)calloc((handler+1u), sizeof(stack_entry_t));
+            stack_entry_t *rewrite_entries = (stack_entry_t *)calloc((handler+1), sizeof(stack_entry_t));
             if (rewrite_entries == NULL)
                     return;
-            for (unsigned int i = 0; i <= handler; ++i)
+            for (int i = 0; i <= handler; ++i)
                 rewrite_entries[i] = g_table.entries[i];
                         
-            g_table.entries = (stack_entry_t*)realloc(g_table.entries, (handler + 1u) * sizeof(stack_entry_t));
+            g_table.entries = (stack_entry_t*)realloc(g_table.entries, (handler + 1) * sizeof(stack_entry_t));
             if (g_table.entries == NULL)
                 return;
-            for (unsigned int i = 0; i <= handler; ++i)
+            for (int i = 0; i <= handler; ++i)
                 g_table.entries[i] = rewrite_entries[i];
             free(rewrite_entries);
             rewrite_entries = NULL;
@@ -147,6 +147,7 @@ void stack_free(const hstack_t hstack)
     {
         free(g_table.entries);
         g_table.entries = NULL;
+        handler_max = -1;
         return;
     }
     return;
@@ -180,7 +181,7 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
         return;
     
     //создаем указатель на указатель data_in, приведенный к char *, для копирования
-    const char *src = (char *)data_in;
+    const char *src = (const char *)data_in;
     for (unsigned int i = 0; i < size; ++i)
         new_top->data[i] = src[i];
     new_top->size = size;
