@@ -14,16 +14,6 @@ struct node_t
     unsigned int size;
 };
 
-
-typedef struct stack_head_t stack_head;
-struct stack_head_t
-{
-    node* head_pointer ;
-    unsigned int size ;
-    int is_free ;
-};
-
-
 typedef int bool_in_c;
 enum
 {
@@ -31,8 +21,16 @@ enum
     true
 };
 
-stack_head stacks_head[_MAX_STACKS] = { [0 ... _MAX_STACKS-1].is_free = true}; // work only for gcc
+typedef struct stack_head_t stack_head;
+struct stack_head_t
+{
+    node* head_pointer ;
+    unsigned int size ;
+    bool_in_c is_free ;
+};
 
+
+stack_head stacks_head[_MAX_STACKS] = { [0 ... _MAX_STACKS-1].is_free = true}; // work only for gcc
 
 hstack_t stack_new()
 {
@@ -50,10 +48,7 @@ hstack_t stack_new()
 
 void stack_free(const hstack_t stack_id)
 {
-    if (stack_id > _MAX_STACKS || stack_id < 0)
-        return;
-
-    if (stacks_head[stack_id].is_free)
+    if (stack_valid_handler(stack_id))
         return;
 
     node *iterator = stacks_head[stack_id].head_pointer;
@@ -92,9 +87,7 @@ unsigned int stack_size(const hstack_t stack_id)
 
 void stack_push(const hstack_t stack_id, const void *data_in, const unsigned int size)
 {
-    if (stack_id > _MAX_STACKS || stack_id < 0)
-        return ;
-    if (stacks_head[stack_id].is_free)
+    if (stack_valid_handler(stack_id))
         return ;
     if (data_in == NULL)
         return ;
@@ -120,18 +113,18 @@ void stack_push(const hstack_t stack_id, const void *data_in, const unsigned int
 
 unsigned int stack_pop(const hstack_t stack_id, void *data_out, const unsigned int size)
 {
-    if (stack_id > _MAX_STACKS || stack_id < 0)
-        return 0;
-    if (stacks_head[stack_id].is_free)
+    if (stack_valid_handler(stack_id))
         return 0;
     if (data_out == NULL)
         return 0;
-    if (size < stacks_head[stack_id].head_pointer->size)
-        return 0;
     if (stacks_head[stack_id].size == 0)
         return 0;
+    if (size < stacks_head[stack_id].head_pointer->size)
+        return 0;
 
-    memcpy(data_out, stacks_head[stack_id].head_pointer->data, stacks_head[stack_id].head_pointer->size);
+    const node* top = stacks_head[stack_id].head_pointer;
+    
+    memcpy(data_out, top->data, top->size);
     unsigned int writen_size = stacks_head[stack_id].head_pointer->size;
 
     free(stacks_head[stack_id].head_pointer->data);

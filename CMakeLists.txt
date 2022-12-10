@@ -53,4 +53,4 @@ function(add_homework name)
 
 endfunction()
 
-add_homework(.)
+add_homework(default .)
