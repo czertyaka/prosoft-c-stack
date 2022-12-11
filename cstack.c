@@ -1,5 +1,4 @@
 #include "cstack.h"
-#include "cstack.h"
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
