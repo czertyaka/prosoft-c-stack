@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef int hstack_t;
 typedef struct Node Node;
 
 #define UNUSED(VAR) (void)(VAR)
