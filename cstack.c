@@ -136,6 +136,7 @@ void stack_free(const hstack_t hstack)
             if (g_table.entries == NULL)
             {
                 free(rewrite_entries);
+                rewrite_entries = NULL;
                 return;
             }
             for (int i = 0; i <= handler; ++i)
