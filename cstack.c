@@ -134,7 +134,10 @@ void stack_free(const hstack_t hstack)
                         
             g_table.entries = (stack_entry_t*)realloc(g_table.entries, (handler + 1) * sizeof(stack_entry_t));
             if (g_table.entries == NULL)
+            {
+                free(rewrite_entries);
                 return;
+            }
             for (int i = 0; i <= handler; ++i)
                 g_table.entries[i] = rewrite_entries[i];
             free(rewrite_entries);
