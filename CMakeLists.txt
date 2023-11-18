@@ -1,57 +1,33 @@
 cmake_minimum_required(VERSION 3.15)
-cmake_policy(SET CMP0091 NEW)
 project(cstack)
 enable_testing()
 
-# choose runtime libs for MSVC
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+option(WITH_TEST "Build test (GTest library required)" OFF)
 
-# clone & build Google Test
-include(cmake/gtest.cmake)
-include_directories(${GTEST_INCLUDE_DIRS})
-include_directories(${GMOCK_INCLUDE_DIRS})
+# build library
+add_library(cstack STATIC cstack.c)
 
-# make library and corresponding test for specific implementation
-function(add_homework name)
+# build test
+if (WITH_TEST)
+    enable_testing()
+    find_package(GTest REQUIRED)
+    add_executable(cstack_test test.cpp)
+    target_link_libraries(cstack_test cstack GTest::GTest GTest::Main)
+    add_test(NAME cstack_test COMMAND cstack_test)
+endif()
 
-    # set directory with cstack.c variable
-    if (${ARGC} LESS 2)
-        set(directory ${name})
-    else()
-        set(directory ${ARGV1})
+# compiler-specific project settings
+if (MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(MSVC_FLAGS /Wall /WX)
+    target_compile_options(cstack PRIVATE ${MSVC_FLAGS})
+    target_link_options(cstack PRIVATE ${MSVC_FLAGS})
+else()
+    target_compile_options(cstack PRIVATE -Wall -Wextra -Wformat -Wformat-security -Werror)
+    set(SANITIZERS_FLAGS -fsanitize=undefined -fsanitize=address)
+    if (WITH_TEST)
+        target_compile_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
+        target_link_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
     endif()
-
-    # build library
-    set(CSTACK_LIB "cstack_${name}")
-    add_library(${CSTACK_LIB} STATIC ${directory}/cstack.c)
-    target_include_directories(${CSTACK_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-    # build test
-    set(TEST_NAME "test_${name}")
-    add_executable(${TEST_NAME} test.cpp)
-    target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-    target_link_libraries(${TEST_NAME}
-        ${CSTACK_LIB}
-        ${GTEST_LIBRARY}
-        ${GTEST_MAIN_LIBRARY}
-        ${GMOCK_LIBRARY}
-        ${GMOCK_MAIN_LIBRARY}
-    )
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-
-    # compilation flags
-    if (MSVC)
-        set(MSVC_FLAGS /Wall /WX)
-        target_compile_options(${CSTACK_LIB} PRIVATE ${MSVC_FLAGS})
-        target_link_options(${CSTACK_LIB} PRIVATE ${MSVC_FLAGS})
-    else()
-        target_compile_options(${CSTACK_LIB} PRIVATE -Wall -Wextra -Wformat -Wformat-security -Werror)
-        set(SANITIZERS_FLAGS -fsanitize=undefined -fsanitize=address)
-        target_compile_options(${TEST_NAME} PRIVATE ${SANITIZERS_FLAGS})
-        target_link_options(${TEST_NAME} PRIVATE ${SANITIZERS_FLAGS})
-    endif()
-
-endfunction()
-
-add_homework(default .)
+endif()
 
