@@ -1,3 +1,5 @@
 build/
-CMakeUserPresets.json
+.vs/
 CMakeLists.txt.user
+CMakeSettings.json
+CMakeUserPresets.json
