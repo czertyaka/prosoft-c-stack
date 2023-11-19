@@ -58,7 +58,7 @@ IDE, и по-моему, всё получилось.
     ```
     Для ArchLinux:
     ```sh
-    pacman -S gtest gmock
+    pacman -S base-devel gtest gmock
     ```
     Я предпочитаю пользоваться пакетным менеджером [conan](https://conan.io/), для которого в репозитории я
     подготовил файл [conanfile.txt](https://github.com/czertyaka/prosoft-c-stack/blob/master/conanfile.txt).
