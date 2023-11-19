@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.23)
 project(cstack)
 enable_testing()
 
@@ -18,10 +18,13 @@ if (WITH_TEST)
     find_package(GTest)
     if (NOT ${GTest_FOUND})
         include(cmake/gtest.cmake)
-        target_link_libraries(cstack_test gtest gtest_main gmock gmock_main)
-    elseif ()
-        target_link_libraries(cstack_test GTest::GTest GTest::Main)
     endif()
+    target_link_libraries(cstack_test
+        GTest::gtest
+        GTest::gtest_main
+        GTest::gmock
+        GTest::gmock_main
+    )
 endif()
 
 # compiler-specific project settings
