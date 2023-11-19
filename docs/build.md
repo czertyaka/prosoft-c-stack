@@ -84,6 +84,28 @@ IDE, и по-моему, всё получилось.
 
 ## Visual Studio
 
+### Сборка библиотеки
+
+1. В Visual Studio выберите ``Open a local folder`` и укажите путь до директории с проектом.
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/ec60aaae-63a6-45e8-8208-5f4728f959ef)
+2. Соберите библиотеку, нажав \<F7\> или ``Build``->``Build All``.
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/9926a3c2-dfa1-4c74-a3ac-f059fd50518f)
+
+### Сборка теста (необязательно)
+
+1. В ``Project``->``CMake settings for cstack`` поставбте галочку в чекбоксе ``WITH_TEST`` и нажмите \<Ctrl-S\>.
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/3c649b22-c32a-4a21-9301-57f5b721b65e)
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/0c3e0cbd-4b06-4e48-8045-226beb6c7d3c)
+2. Нажмите ``Tests``->``Run CTests for cstack``.
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/5844208c-b947-4e9d-b021-d7a0768a083c)
+3. Для более подробного изучения результатов тестов, откройте ``Test Explorer``.
+    ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/510ee7ba-928c-4d51-a8ea-e38fc71e2087)
+
+
+
+
+
+
 ## QtCreator
 
 ### Сборка библиотеки
