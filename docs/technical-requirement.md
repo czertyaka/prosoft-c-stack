@@ -110,4 +110,10 @@ struct stack_entries_table g_table = {0u, NULL};
 ```
 **_Пошаговая инструкция_**
 
+1. Заведите профиль на <https://github.com/>.
+2. Сделайте форк репозитория. После этого в вашем аккаунте среди ваших репозиториев появится копия данного репозитория с веткой `master`.
+![Screenshot from 2023-11-19 21-10-28](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/c0c24f41-64cb-4c47-a883-63c150712a84)
+![Screenshot from 2023-11-19 21-14-07](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/517553c2-a696-4644-ac25-c6ba39f6607c)
+![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/b04466b9-858e-44ee-a08a-4d1f086bd0c3)
+
 Вот [тут](https://git-scm.com/book/ru/v2/GitHub-%D0%92%D0%BD%D0%B5%D1%81%D0%B5%D0%BD%D0%B8%D0%B5-%D1%81%D0%BE%D0%B1%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D0%B2%D0%BA%D0%BB%D0%B0%D0%B4%D0%B0-%D0%B2-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B) подробнее про совместную работу над проектами, форки, пулл-реквесты и т.д.
