@@ -75,6 +75,8 @@ IDE, и по-моему, всё получилось.
     ```sh
     cmake --build build
     cmake --build build -j $(nproc)
+    cmake --build build/Release # если использовали conan
+    cmake --build build/Release -j $(nproc) # если использовали conan
     ```
 5. Запустить выполнение теста:
    ```sh
