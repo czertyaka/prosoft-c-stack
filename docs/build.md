@@ -28,6 +28,7 @@
 1. Установить фреймворк [googletest](https://github.com/google/googletest),
     библиотеку адрес-санитайзера и библиотеку санитайзера UB любым известным способом
     (собрать из исходников, скачать с помощью пакетного менеджера системы).
+    
     Для Debian репозиториев:
     ```sh
     sudo apt install build-essential libgtest-dev libgmock-dev
