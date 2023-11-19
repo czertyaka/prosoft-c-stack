@@ -5,6 +5,7 @@
 
 hstack_t stack_new(void)
 {
+    // dummy change
     return -1;
 }
 
