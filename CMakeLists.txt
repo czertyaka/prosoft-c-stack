@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(cstack)
 enable_testing()
 
-option(WITH_TEST "Build test (GTest library required)" ON)
+option(WITH_TEST "Build test (GTest library required)" OFF)
 
 # build library
 add_library(cstack STATIC cstack.c)
