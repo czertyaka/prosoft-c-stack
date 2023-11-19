@@ -1,9 +1,9 @@
 # Сборка проекта
 
 ## Содержание
-1. [Командная строка Linux](#linux)
-2. [Visual Studio](#vs)
-3. [QtCreator](#qt)
+1. [Командная строка Linux](#командная-строка-linux)
+2. [Visual Studio](#visual-studio)
+3. [QtCreator](#qtcreator)
 
 ## Командная строка Linux
 
