@@ -16,11 +16,11 @@ if (WITH_TEST)
 
     # link with googletest
     find_package(GTest)
-    if (${GTest_FOUND})
-        target_link_libraries(cstack_test GTest::GTest GTest::Main)
-    elseif ()
+    if (NOT ${GTest_FOUND})
         include(cmake/gtest.cmake)
         target_link_libraries(cstack_test gtest gtest_main gmock gmock_main)
+    elseif ()
+        target_link_libraries(cstack_test GTest::GTest GTest::Main)
     endif()
 endif()
 
