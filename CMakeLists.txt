@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(cstack)
 enable_testing()
 
-option(WITH_TEST "Build test (GTest library required)" OFF)
+option(WITH_TEST "Build test (GTest library required)" ON)
 
 # build library
 add_library(cstack STATIC cstack.c)
@@ -10,9 +10,12 @@ add_library(cstack STATIC cstack.c)
 # build test
 if (WITH_TEST)
     enable_testing()
-    find_package(GTest REQUIRED)
+    find_package(GTest)
+    if (NOT ${GTest_FOUND})
+        include(cmake/gtest.cmake)
+    endif()
     add_executable(cstack_test test.cpp)
-    target_link_libraries(cstack_test cstack GTest::GTest GTest::Main)
+    target_link_libraries(cstack_test cstack gtest gtest_main gmock gmock_main)
     add_test(NAME cstack_test COMMAND cstack_test)
 endif()
 
