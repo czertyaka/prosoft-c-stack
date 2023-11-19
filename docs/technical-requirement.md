@@ -115,5 +115,42 @@ struct stack_entries_table g_table = {0u, NULL};
 ![Screenshot from 2023-11-19 21-10-28](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/c0c24f41-64cb-4c47-a883-63c150712a84)
 ![Screenshot from 2023-11-19 21-14-07](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/517553c2-a696-4644-ac25-c6ba39f6607c)
 ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/b04466b9-858e-44ee-a08a-4d1f086bd0c3)
+3. Склонируйте репозиторий на ваш компьютер. Создайте ветку в вашем репозитории с названием, отличным от `master`.
+В командной строке Linux или GitBash на Windows это можно сделать следующим образом:
+![Screenshot from 2023-11-19 21-19-17](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/968f62e9-7b54-4a98-b937-26a92edec962)
+```bash
+git clone <ссылка из буфера обмена>
+cd prosoft-c-stack/
+git checkout -b development
+git push --set-upstream origin development
+```
+4. Выполните вашу первую реализацию задания, закоммитьте и запушьте изменения. Пример:
+```bash
+git add cstack.c
+git commit -m "my first commit"
+git push
+```
+5. Создайте пулл-реквест в вашем репозитории из вашей ветки в ветку `master`.
+Обратите внимание, что в качестве base ветки нужно выбрать ветку из *вашего* репозитория.
+![Screenshot from 2023-11-19 21-57-23](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/0b105305-4eae-49b0-85ec-b42f77324221)
+![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/aabe4444-66d7-4150-b03d-63c04ae9aeef)
+![Screenshot from 2023-11-19 21-59-32](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/ee2897f5-86b1-41ed-b336-5fb324324288)
+![Screenshot from 2023-11-19 22-03-28](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/71830c4b-b854-4d5d-8235-89ef9e86287d)
+6. В названии пулл-реквеста укажите фамилию и имя
+![Screenshot from 2023-11-19 22-08-56](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/4ecaf09b-6329-4d49-95fb-f093ad72220b)
+![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/9b79dce5-1d9f-4e70-8a2d-f9a5418821dc)
+7. Добавьте меня (czertyaka) в качестве коллаборатора в ваш проект.
+![Screenshot from 2023-11-19 22-12-27](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/70d43d5e-0a5f-42f3-b1c8-78d58de74874)
+![Screenshot from 2023-11-19 22-13-35](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/28ec2e77-30a4-4467-880e-b39c4f67bf4c)
+![Screenshot from 2023-11-19 22-14-24](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/8fd2719d-be9b-4395-aaa3-ea30f07c04d3)
+![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/671088b3-af2b-4872-9c0f-8ff82253a4f0)
+8. После этого я появлюсь в списке коллабораторов в статусе Pending Invite.
+На мою почту придет письмо, в котором меня попросят присоединиться к вашему проекту.
+![Screenshot from 2023-11-19 22-19-13](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/1938f69e-a51c-4a3a-8a60-bfc19a82701b)
+После моего присоединения:
+![Screenshot from 2023-11-19 22-21-10](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/5b826543-5666-417d-a579-d1167042d224)
+9. Добавьте меня в качестве рецензента в ваш пулл-реквест.
+![Screenshot from 2023-11-19 22-22-30](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/bb2da6ec-aff8-4ef4-b39f-354bac1faa00)
+10. Дальше начинается процесс ревью. Если у меня есть замечания, я их делаю, вы правите код.
 
 Вот [тут](https://git-scm.com/book/ru/v2/GitHub-%D0%92%D0%BD%D0%B5%D1%81%D0%B5%D0%BD%D0%B8%D0%B5-%D1%81%D0%BE%D0%B1%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D0%B2%D0%BA%D0%BB%D0%B0%D0%B4%D0%B0-%D0%B2-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B) подробнее про совместную работу над проектами, форки, пулл-реквесты и т.д.
