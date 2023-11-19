@@ -10,13 +10,18 @@ add_library(cstack STATIC cstack.c)
 # build test
 if (WITH_TEST)
     enable_testing()
-    find_package(GTest)
-    if (NOT ${GTest_FOUND})
-        include(cmake/gtest.cmake)
-    endif()
     add_executable(cstack_test test.cpp)
-    target_link_libraries(cstack_test cstack gtest gtest_main gmock gmock_main)
+    target_link_libraries(cstack_test cstack)
     add_test(NAME cstack_test COMMAND cstack_test)
+
+    # link with googletest
+    find_package(GTest)
+    if (${GTest_FOUND})
+        target_link_libraries(cstack_test GTest::GTest GTest::Main)
+    elseif ()
+        include(cmake/gtest.cmake)
+        target_link_libraries(cstack_test gtest gtest_main gmock gmock_main)
+    endif()
 endif()
 
 # compiler-specific project settings
