@@ -21,7 +21,7 @@ Class project for C-language lessons, Prosoft Developer School 2022
 Сборка проекта описана в файле
 [CMakeLists.txt](https://github.com/czertyaka/prosoft-c-stack/blob/master/CMakeLists.txt).
 Порядок сборки проекта с примерами в разных средах разработки описан в
-[этом разделе]().
+[этом разделе](https://github.com/czertyaka/prosoft-c-stack/blob/master/docs/build.md).
 Подробнее о системах сборки
 [тут]().
 > :warning: добавить ссылки.
@@ -58,7 +58,7 @@ Telegram: @czert
 так что требования к работе с этими инструментами также являются частью технического задания.
 Другими словами, строго придерживаемся пошаговой инструкции и не присылаем мне код на почту
 :smiling_face_with_tear:.
-* [Инструкция по сборке]().
+* [Инструкция по сборке](https://github.com/czertyaka/prosoft-c-stack/blob/master/docs/build.md).
 В этом разделе пошагово со скриншотами воспроизвожу сборку проекта без тестов и с ним для
 командной строки Linux, в Visual Studio и QtCreator.
 Для VSCode с расширениями инструкции нет, поскольку набор расширений у каждого индивидуальный,
