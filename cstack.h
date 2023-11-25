@@ -1,6 +1,10 @@
 #ifndef CSTACK_H
 #define CSTACK_H
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 typedef int hstack_t;
 
 hstack_t stack_new(void);
@@ -9,5 +13,7 @@ int stack_valid_handler(const hstack_t stack);
 unsigned int stack_size(const hstack_t stack);
 void stack_push(const hstack_t stack, const void* data_in, const unsigned int size);
 unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int size);
+
+void stack_init(void);
 
 #endif /* CSTACK_H */

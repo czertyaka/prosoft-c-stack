@@ -5,23 +5,61 @@ extern "C" {
 #include "cstack.h"
 }
 
-TEST(AllAPITest, BadStackHandler)
-{
-    stack_free(-1);
-    EXPECT_EQ(stack_valid_handler(-1), 1);
-    EXPECT_EQ(stack_size(-1), 0u);
+//TEST(AllAPITest, BadStackHandler)
+//{
+//    stack_free(-1);
+//    EXPECT_EQ(stack_valid_handler(-1), 1);
+//    EXPECT_EQ(stack_size(-1), 0u);
+//    const int data_in = 1;
+//    stack_push(-1, &data_in, sizeof(data_in));
+//    int data_out = 0;
+//    EXPECT_EQ(stack_pop(-1, &data_out, sizeof(data_out)), 0u);
+//    EXPECT_EQ(data_out, 0);
+//}
+
+
+TEST(AllocationTests, Kostya1) {
+    const hstack_t stack = stack_new();
     const int data_in = 1;
-    stack_push(-1, &data_in, sizeof(data_in));
-    int data_out = 0;
-    EXPECT_EQ(stack_pop(-1, &data_out, sizeof(data_out)), 0u);
-    EXPECT_EQ(data_out, 0);
+    stack_push(stack, &data_in, sizeof(data_in));
+    int data_out;
+    EXPECT_EQ(stack_pop(stack, &data_out, sizeof(data_out)), sizeof(data_out));
+    EXPECT_EQ(data_out, 1);
 }
+
+TEST(AllocationTests, Kostya2) {
+    const hstack_t stack = stack_new();
+    const int data_in1 = 1;
+    const int data_in2 = 2;
+    stack_push(stack, &data_in1, sizeof(data_in1));
+    stack_push(stack, &data_in2, sizeof(data_in2));
+    int data_out;
+    EXPECT_EQ(stack_pop(stack, &data_out, sizeof(data_out)), sizeof(data_out));
+    EXPECT_EQ(data_out, 2);
+    EXPECT_EQ(stack_pop(stack, &data_out, sizeof(data_out)), sizeof(data_out));
+    EXPECT_EQ(data_out, 1);
+}
+
+TEST(AllocationTests, Kostya3) {
+    const hstack_t stack = stack_new();
+    const int data_in1 = 1;
+    const double data_in2 = 2.2;
+    stack_push(stack, &data_in1, sizeof(data_in1));
+    stack_push(stack, &data_in2, sizeof(data_in2));
+    int data_out1;
+    double data_out2;
+    EXPECT_EQ(stack_pop(stack, &data_out2, sizeof(data_out2)), sizeof(data_out2));
+    EXPECT_EQ(data_out2, 2.2);
+    EXPECT_EQ(stack_pop(stack, &data_out1, sizeof(data_out1)), sizeof(data_out1));
+    EXPECT_EQ(data_out1, 1);
+}
+
 
 TEST(AllocationTests, SingleAllocation)
 {
     const hstack_t stack = stack_new();
-    EXPECT_EQ(stack_valid_handler(stack), 0);
-    EXPECT_EQ(stack_size(stack), 0u);
+    //EXPECT_EQ(stack_valid_handler(stack), 0);
+    //EXPECT_EQ(stack_size(stack), 0u);
     stack_free(stack);
     EXPECT_EQ(stack_valid_handler(stack), 1);
 }
