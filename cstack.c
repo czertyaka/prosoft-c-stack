@@ -6,7 +6,6 @@
 // *** LIBRARY SETTINGS ***
 
 #define STACK_TABLE_HANDLER 12u
-#define STACK_MIN_CAPACITY 256u
 #define UNUSED(VAR) (void)(VAR)
 
 // ========================
@@ -23,7 +22,6 @@ typedef struct node
 typedef struct stack
 {
     _Bool                   isFree;
-    unsigned int            capacity;
     unsigned int            reserved; // Количество занятых байтов в стеке
     struct node*            entry;
 } stack_t;
@@ -52,7 +50,6 @@ hstack_t stack_new(void)
     }
 
     _stack->reserved =       0;
-    _stack->capacity =       STACK_MIN_CAPACITY;
     _stack->isFree =         0;
     _stack->entry = NULL;
 
