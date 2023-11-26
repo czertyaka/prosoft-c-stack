@@ -5,17 +5,17 @@ extern "C" {
 #include "cstack.h"
 }
 
-//TEST(AllAPITest, BadStackHandler)
-//{
-//    stack_free(-1);
-//    EXPECT_EQ(stack_valid_handler(-1), 1);
-//    EXPECT_EQ(stack_size(-1), 0u);
-//    const int data_in = 1;
-//    stack_push(-1, &data_in, sizeof(data_in));
-//    int data_out = 0;
-//    EXPECT_EQ(stack_pop(-1, &data_out, sizeof(data_out)), 0u);
-//    EXPECT_EQ(data_out, 0);
-//}
+TEST(AllAPITest, BadStackHandler)
+{
+    stack_free(-1);
+    EXPECT_EQ(stack_valid_handler(-1), 1);
+    EXPECT_EQ(stack_size(-1), 0u);
+    const int data_in = 1;
+    stack_push(-1, &data_in, sizeof(data_in));
+    int data_out = 0;
+    EXPECT_EQ(stack_pop(-1, &data_out, sizeof(data_out)), 0u);
+    EXPECT_EQ(data_out, 0);
+}
 
 
 TEST(AllocationTests, Kostya1) {
@@ -25,6 +25,7 @@ TEST(AllocationTests, Kostya1) {
     int data_out;
     EXPECT_EQ(stack_pop(stack, &data_out, sizeof(data_out)), sizeof(data_out));
     EXPECT_EQ(data_out, 1);
+    stack_free(0);
 }
 
 TEST(AllocationTests, Kostya2) {
@@ -38,6 +39,7 @@ TEST(AllocationTests, Kostya2) {
     EXPECT_EQ(data_out, 2);
     EXPECT_EQ(stack_pop(stack, &data_out, sizeof(data_out)), sizeof(data_out));
     EXPECT_EQ(data_out, 1);
+    stack_free(0);
 }
 
 TEST(AllocationTests, Kostya3) {
@@ -46,19 +48,22 @@ TEST(AllocationTests, Kostya3) {
     const double data_in2 = 2.2;
     stack_push(stack, &data_in1, sizeof(data_in1));
     stack_push(stack, &data_in2, sizeof(data_in2));
+    EXPECT_EQ(stack_size(stack), 2);
     int data_out1;
     double data_out2;
     EXPECT_EQ(stack_pop(stack, &data_out2, sizeof(data_out2)), sizeof(data_out2));
     EXPECT_EQ(data_out2, 2.2);
     EXPECT_EQ(stack_pop(stack, &data_out1, sizeof(data_out1)), sizeof(data_out1));
     EXPECT_EQ(data_out1, 1);
+    stack_free(0);
 }
 
 
 TEST(AllocationTests, SingleAllocation)
 {
+    EXPECT_EQ(stack_valid_handler(0), 1);
     const hstack_t stack = stack_new();
-    //EXPECT_EQ(stack_valid_handler(stack), 0);
+    EXPECT_EQ(stack_valid_handler(stack), 0);
     //EXPECT_EQ(stack_size(stack), 0u);
     stack_free(stack);
     EXPECT_EQ(stack_valid_handler(stack), 1);
@@ -113,7 +118,7 @@ TEST_F(ModifyTests, PopBadArgs)
 {
     const size_t size = 5;
     const int data_in[size] = {1};
-    stack_push(stack, &data_in, sizeof(data_in));
+    stack_push(stack, &data_in[0], sizeof(data_in));
     ASSERT_EQ(stack_size(stack), 1u);
 
     EXPECT_EQ(stack_pop(stack, nullptr, 0u), 0u);
