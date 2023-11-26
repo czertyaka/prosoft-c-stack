@@ -21,8 +21,6 @@ typedef struct node
 #pragma pack(push, 1)
 typedef struct stack
 {
-    _Bool                   isFree;
-    unsigned int            reserved; // Количество занятых байтов в стеке
     struct node*            entry;
 } stack_t;
 #pragma pack(pop)
@@ -48,9 +46,6 @@ hstack_t stack_new(void)
     if (_stack == NULL) {
         return -1;
     }
-
-    _stack->reserved =       0;
-    _stack->isFree =         0;
     _stack->entry = NULL;
 
     g_table.stacks[g_table.count] = _stack;
@@ -123,7 +118,6 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
     ptr->prev = g_table.stacks[hstack]->entry;
     
     g_table.stacks[hstack]->entry = ptr;
-    g_table.stacks[hstack]->reserved += size + sizeof(node_t);
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
@@ -144,7 +138,6 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 
     node_t* _nextTopNode = g_table.stacks[hstack]->entry->prev;
     g_table.stacks[hstack]->entry = _nextTopNode;
-    g_table.stacks[hstack]->reserved -= size + sizeof(node_t);
     return size;
 }
 
