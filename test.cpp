@@ -58,6 +58,38 @@ TEST(AllocationTests, Kostya3) {
     stack_free(0);
 }
 
+TEST(AllocationTests, StressTest) {
+    const size_t count = 10;
+    hstack_t stacks[count] = { -1 };
+    for (size_t i = 0; i < count; ++i)
+    {
+        stacks[i] = stack_new();
+        EXPECT_EQ(stack_valid_handler(stacks[i]), 0);
+        EXPECT_EQ(stack_size(stacks[i]), 0u);
+    }
+
+    for (int i = 1; i < 100; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            int a = i + j;
+            stack_push(j, &a, sizeof(int));
+            EXPECT_EQ(stack_size(stacks[j]), i);
+        }
+    }
+
+    int data_out[10][100];
+    for (int i = 0; i < 100; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            stack_pop(j, &data_out[j][i], sizeof(int));
+        }
+    }
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        stack_free(stacks[i]);
+        EXPECT_EQ(stack_valid_handler(stacks[i]), 1);
+    }
+}
+
 
 TEST(AllocationTests, SingleAllocation)
 {
