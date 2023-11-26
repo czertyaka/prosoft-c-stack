@@ -33,7 +33,7 @@ typedef struct stack_entries_table
 } stack_entries_table_t;
 #pragma pack(pop)
 
-stack_entries_table_t g_table = { 0, NULL };
+stack_entries_table_t g_table = { {0}, NULL };
 
 hstack_t stack_new(void)
 {
