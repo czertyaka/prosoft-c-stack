@@ -5,7 +5,7 @@
 
 // *** LIBRARY SETTINGS ***
 
-#define STACK_TABLE_HANDLER 12u
+#define STACK_TABLE_HANDLER 12
 #define UNUSED(VAR) (void)(VAR)
 
 // ========================
