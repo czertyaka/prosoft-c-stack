@@ -1,6 +1,6 @@
 #include "cstack.h"
 
-// Реализация записи данных позаимствована отсюда
+// ГђГҐГ Г«ГЁГ§Г Г¶ГЁГї Г§Г ГЇГЁГ±ГЁ Г¤Г Г­Г­Г»Гµ ГЇГ®Г§Г ГЁГ¬Г±ГІГўГ®ГўГ Г­Г  Г®ГІГ±ГѕГ¤Г 
 // https://constantsmatter.com/posts/generic-ds-c/
 
 // *** LIBRARY SETTINGS ***
@@ -29,11 +29,11 @@ typedef struct stack
 typedef struct stack_entries_table 
 {
     int                     count;
-    stack_t*                stacks[STACK_TABLE_HANDLER]; // Указывает на указатели входа в стеки
+    stack_t*                stacks[STACK_TABLE_HANDLER]; // Г“ГЄГ Г§Г»ГўГ ГҐГІ Г­Г  ГіГЄГ Г§Г ГІГҐГ«ГЁ ГўГµГ®Г¤Г  Гў Г±ГІГҐГЄГЁ
 } stack_entries_table_t;
 #pragma pack(pop)
 
-stack_entries_table_t g_table = { {0}, NULL };
+stack_entries_table_t g_table = { .count = 0,  .stacks = NULL };
 
 hstack_t stack_new(void)
 {
