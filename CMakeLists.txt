@@ -9,7 +9,7 @@ include(FetchContent)
 # build library
 add_library(cstack STATIC cstack.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${COMMON_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wno-error=missing-braces ${COMMON_FLAGS}")
 
 # build test
 if (WITH_TEST)
