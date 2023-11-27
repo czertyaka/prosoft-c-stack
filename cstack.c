@@ -28,12 +28,12 @@ typedef struct stack
 #pragma pack(push, 1)
 typedef struct stack_entries_table 
 {
-    int                     count;
     stack_t*                stacks[STACK_TABLE_HANDLER]; // Óêàçûâàåò íà óêàçàòåëè âõîäà â ñòåêè
+    int                     count;
 } stack_entries_table_t;
 #pragma pack(pop)
 
-stack_entries_table_t g_table = { .count = 0,  .stacks = NULL };
+stack_entries_table_t g_table = {.stacks = NULL, .count = 0 };
 
 hstack_t stack_new(void)
 {
