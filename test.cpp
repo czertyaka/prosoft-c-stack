@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <algorithm>
+
 extern "C" {
 #include "cstack.h"
 }
@@ -29,7 +31,8 @@ TEST(AllocationTests, SingleAllocation)
 TEST(AllocationTests, SeveralAllocations)
 {
     const size_t count = 10;
-    hstack_t stacks[count] = {-1};
+    hstack_t stacks[count] = {0};
+    std::fill_n(stacks, count, -1);
     for (size_t i = 0; i < count; ++i)
     {
         stacks[i] = stack_new();
@@ -74,7 +77,8 @@ TEST_F(ModifyTests, PushBadArgs)
 TEST_F(ModifyTests, PopBadArgs)
 {
     const size_t size = 5;
-    const int data_in[size] = {1};
+    int data_in[size] = {0};
+    std::fill_n(data_in, size, 1);
     stack_push(stack, &data_in, sizeof(data_in));
     ASSERT_EQ(stack_size(stack), 1u);
 
