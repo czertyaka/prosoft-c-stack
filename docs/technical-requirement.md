@@ -80,6 +80,8 @@ struct node
     unsigned int size;
     char data[0];
 };
+
+typedef struct node* stack_t;
 ```
 Такой подход напоминает другую структуру данных [односвязный список](https://prog-cpp.ru/data-ols/).
 Из общего у них наличие указателя на предыдущий элемент.
