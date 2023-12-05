@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <string.h>
 
+#define UNUSED(VAR) (void)(VAR)
 #define MAX_SIZE 100
 
 typedef struct {
