@@ -2,11 +2,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #define UNUSED(VAR) (void)(VAR)
 
 
- #define MAX_COUNT_STACK 10
+#define MAX_COUNT_STACK 10
+#define hstack_t int
 struct node
 {
 	const struct node* prev;
@@ -68,13 +70,29 @@ void stack_free(const hstack_t hstack)
 		return;
 	}
 
+	stack_t curr_stack = g_table.entries[hstack]->stack;
 
+	if (curr_stack)
+	{
+		stack_t prev_stack = (stack_t)curr_stack->prev;
+		for (int i = 0; i < g_table.entries[hstack]->reserved; ++i)
+		{
+			free(curr_stack);
+			curr_stack = prev_stack;
+			if (curr_stack)
+			{
+				prev_stack = (stack_t) curr_stack->prev;
+			}
+		}
+	}
 
+	g_table.entries[hstack] = NULL;
+	--g_table.size;
 }
 
 int stack_valid_handler(const hstack_t hstack)
 {
-	if (hstack < MAX_COUNT_STACK && hstack >= 0 && g_table.entries[hstack])
+	if (hstack < MAX_COUNT_STACK && hstack >= 0 && g_table.entries[hstack] != NULL)
 	{
 		return 0;
 	}
@@ -131,3 +149,6 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 	}
 	return 0;
 }
+
+
+
