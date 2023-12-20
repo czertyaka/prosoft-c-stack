@@ -112,22 +112,24 @@ unsigned int stack_size(const hstack_t hstack)
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-	if (stack_valid_handler(hstack) || !data_in || size <= 0)
+	if (!stack_valid_handler(hstack) && data_in && size > 0)
 	{
-		return;
+		stack_t new_node = (stack_t) malloc(sizeof(struct node));
+		if (!new_node)
+		{
+			return;
+		}
+
+		new_node->data = (char*) malloc(sizeof (char) * size);
+
+		new_node->size = size;
+		new_node->prev = g_table.entries[hstack]->stack;
+		memcpy(new_node->data, data_in, size);
+		g_table.entries[hstack]->stack = new_node;
+		++g_table.entries[hstack]->reserved;
 	}
 
-	stack_t new_node = (stack_t) malloc(sizeof(stack_t) + sizeof (char) * size);
-	if (!new_node)
-	{
-		return;
-	}
 
-	new_node->size = size;
-	new_node->prev = g_table.entries[hstack]->stack;
-	g_table.entries[hstack]->stack = new_node;
-	memcpy(new_node->data, data_in, size);
-	++g_table.entries[hstack]->reserved;
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
