@@ -77,13 +77,15 @@ void stack_free(const hstack_t hstack)
 		stack_t prev_stack = (stack_t)curr_stack->prev;
 		for (int i = 0; i < g_table.entries[hstack]->reserved; ++i)
 		{
-			free(curr_stack);
+			free(curr_stack->data);
 			curr_stack = prev_stack;
 			if (curr_stack)
 			{
 				prev_stack = (stack_t) curr_stack->prev;
 			}
 		}
+		free(g_table.entries[hstack]->stack);
+		free(g_table.entries[hstack]);
 	}
 
 	g_table.entries[hstack] = NULL;
