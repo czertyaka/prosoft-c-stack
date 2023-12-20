@@ -143,13 +143,18 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 	{
 		stack_t pop_element = g_table.entries[hstack]->stack;
 		stack_t new_top_element = (stack_t)pop_element->prev;
+
 		memcpy(data_out,
 			   pop_element->data,
 			   pop_element->size);
+
 		g_table.entries[hstack]->stack = new_top_element;
 		unsigned int copy_size = pop_element->size;
+		free(pop_element->data);
 		free(pop_element);
+
 		--g_table.entries[hstack]->reserved;
+
 		return copy_size;
 	}
 	return 0;
