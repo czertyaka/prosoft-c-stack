@@ -16,13 +16,14 @@ typedef struct stack_entry stack_entry_t;
 
 struct stack_entries_table; // структура, представляющая собой таблицу стеков
 
-struct stack_entries_table g_table;
+struct stack_entries_table g_table = { 0u, NULL };
 
 typedef int hstack_t;
 
 int stack_valid_handler(const hstack_t stack)  // проверка на корректность введенного хендлера стека
 {
-    if (stack > g_table.size - 1 || g_table.entries + stack == NULL)
+    
+    if (stack > g_table.size - 1 || g_table.entries + stack == NULL || stack < 0)
         return 1;
 
     return 0;
@@ -59,8 +60,9 @@ void stack_free(const hstack_t stack)  // удаление стека
         free(cur_node);
         cur_node = prev;
     }
-
-    p->reserved = -1;
+    free(p);
+    g_table.size--;
+    //p->reserved = -1;
 }
 
 

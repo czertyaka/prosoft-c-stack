@@ -20,11 +20,9 @@ struct stack_entry // структура, описывающая конкретный стек
 
 struct stack_entries_table // структура, представляющая собой таблицу стеков
 {
-    unsigned int size;      // количество стеков
+    int size;      // количество стеков
     struct stack_entry* entries; // указатель на конкретный стек
 };
-
-struct stack_entries_table g_table = { 0u, NULL };
 
 typedef int hstack_t;
 //struct node;
