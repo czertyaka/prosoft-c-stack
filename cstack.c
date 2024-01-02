@@ -23,7 +23,7 @@ typedef int hstack_t;
 int stack_valid_handler(const hstack_t stack)  // проверка на корректность введенного хендлера стека
 {
     
-    if (stack > g_table.size - 1 || g_table.entries + stack == NULL || stack < 0)
+    if ( g_table.entries[stack] == NULL || stack < 0)
         return 1;
 
     return 0;
@@ -32,16 +32,6 @@ int stack_valid_handler(const hstack_t stack)  // проверка на корр
 
 hstack_t stack_new(void) // создание нового стека
 {
-    /*g_table.entries = (stack_entry_t*)realloc(g_table.entries, sizeof(stack_entry_t) * (g_table.size + 1)); // расширяем память под новый стек
-    if (g_table.entries == NULL)
-        return -1;
-
-    stack_entry_t* table_stack = g_table.entries + g_table.size;  // указатель на конкретный стек
-    table_stack->reserved = 0;
-    table_stack->stack = NULL;
-    g_table.size++;
-
-    return g_table.size - 1;*/
 
     stack_entry_t* table_stack = (stack_entry_t*)malloc(sizeof(stack_entry_t));
     if (!table_stack)
@@ -61,6 +51,7 @@ void stack_free(const hstack_t stack)  // удаление стека
         return;
 
     struct stack_entry* p = g_table.entries[stack];  // указатель на конкретный стек
+    g_table.entries[stack] = NULL;
 
     node_t cur_node = p->stack;
     while (cur_node != NULL)
@@ -72,7 +63,6 @@ void stack_free(const hstack_t stack)  // удаление стека
     }
     free(p);
     g_table.size--;
-    //p->reserved = -1;
 }
 
 
