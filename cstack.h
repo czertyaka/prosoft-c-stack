@@ -21,7 +21,7 @@ struct stack_entry // структура, описывающая конкретный стек
 struct stack_entries_table // структура, представляющая собой таблицу стеков
 {
     int size;      // количество стеков
-    struct stack_entry* entries; // указатель на конкретный стек
+    struct stack_entry* entries[20]; // указатель на конкретный стек
 };
 
 typedef int hstack_t;

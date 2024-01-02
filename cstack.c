@@ -32,7 +32,7 @@ int stack_valid_handler(const hstack_t stack)  // проверка на корр
 
 hstack_t stack_new(void) // создание нового стека
 {
-    g_table.entries = (stack_entry_t*) realloc(g_table.entries, sizeof(stack_entry_t) * (g_table.size + 1)); // расширяем память под новый стек
+    /*g_table.entries = (stack_entry_t*)realloc(g_table.entries, sizeof(stack_entry_t) * (g_table.size + 1)); // расширяем память под новый стек
     if (g_table.entries == NULL)
         return -1;
 
@@ -41,7 +41,17 @@ hstack_t stack_new(void) // создание нового стека
     table_stack->stack = NULL;
     g_table.size++;
 
-    return g_table.size - 1;
+    return g_table.size - 1;*/
+
+    stack_entry_t* table_stack = (stack_entry_t*)malloc(sizeof(stack_entry_t));
+    if (!table_stack)
+        return -1;
+
+    table_stack->reserved = 0;
+    table_stack->stack = NULL;
+    g_table.entries[g_table.size] = table_stack;
+
+    return g_table.size++;
 }
 
 
@@ -50,7 +60,7 @@ void stack_free(const hstack_t stack)  // удаление стека
     if (stack_valid_handler(stack) == 1)
         return;
 
-    struct stack_entry* p = g_table.entries + stack;  // указатель на конкретный стек
+    struct stack_entry* p = g_table.entries[stack];  // указатель на конкретный стек
 
     node_t cur_node = p->stack;
     while (cur_node != NULL)
@@ -71,7 +81,7 @@ unsigned int stack_size(const hstack_t stack)
     if (stack_valid_handler(stack) == 1)
         return 0;
 
-    stack_entry_t* p = g_table.entries + stack;
+    stack_entry_t* p = g_table.entries[stack];
     return p->reserved;
 }
 
@@ -94,7 +104,7 @@ void stack_push(const hstack_t stack, const void* data, const unsigned int size)
     memcpy(new_node->data_void, data, size);
     new_node->size = size;
 
-    struct stack_entry* p = g_table.entries + stack;
+    struct stack_entry* p = g_table.entries[stack];
     new_node->prev = p->stack;  // переставляем указатель на предыдущий элемент
     p->stack = new_node;  // переставляем указатель на вершину стека
     ++(p->reserved);
@@ -106,7 +116,7 @@ unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int 
     if (stack_valid_handler(stack) == 1)
         return 0;
 
-    struct stack_entry* p = g_table.entries + stack;
+    struct stack_entry* p = g_table.entries[stack];
 
     node_t pop_node = p->stack;
     if (pop_node == NULL)
