@@ -27,11 +27,20 @@ jobs:
     - name: Cppcheck
       run: |
         cppcheck \
-          --project=./build/Release/compile_commands.json \
           --enable=all \
-          --template=gcc \
           --file-filter="cstack.c" \
+          --project=./build/Release/compile_commands.json \
           --suppress=checkersReport \
-          --suppress=missingIncludeSystem
+          --suppress=missingIncludeSystem \
+          --template=gcc \
+          --xml \
+          --output-file=cppcheck-report.xml
+        cppcheck-htmlreport \
+          --file=cppcheck-report.xml \
+          --report-dir=cppcheck-report
+    - name: Publish Cppcheck report
+      uses: pavi2410/html-preview-action@v2
+      with:
+        html_file: 'cppcheck-report/index.html'
     - name: Test
       run: ctest --test-dir build/Release --output-on-failure
