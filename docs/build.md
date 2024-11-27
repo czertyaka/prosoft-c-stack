@@ -32,14 +32,14 @@ IDE, и по-моему, всё получилось.
     ```sh
     cd prosoft-c-stack
     ```
-2. Выполнить конфигурацию `cmake` в директории `build`, которая создастся автоматически:
+2. Выполнить конфигурацию `cmake` в директории `build/Release`, которая создастся автоматически:
     ```sh
-    cmake -B build
+    cmake -B build/Release
     ```  
 3. Собрать проект без распараллеливания или с распараллеливанием:
     ```sh
-    cmake --build build
-    cmake --build build -j $(nproc)
+    cmake --build build/Release
+    cmake --build build/Release -j $(nproc)
     ```
 
 ### Сборка теста (необязательно)
@@ -64,24 +64,21 @@ IDE, и по-моему, всё получилось.
     подготовил файл [conanfile.txt](https://github.com/czertyaka/prosoft-c-stack/blob/master/conanfile.txt).
     Если у вас есть этот инструмент и вы с ним знакомы, установить googletest можно с помощью команды:
     ```sh
-    conan install conanfile.txt --build=missing
+    conan install . --build=missing
     ```
 3. Сконфигурировать `cmake` с опцией `WITH_TEST`:
     ```sh
-    cmake -B build -DWITH_TEST=ON
-    cmake -B build/Release -DWITH_TEST=ON # если использовали conan
+    cmake -B build/Release -DWITH_TEST=ON
+    cmake --preset conan-release -DWITH_TEST=ON # если использовали conan
     ```
 4. Собрать проект без распараллеливания или с распараллеливанием:
     ```sh
-    cmake --build build
-    cmake --build build -j $(nproc)
-    cmake --build build/Release # если использовали conan
-    cmake --build build/Release -j $(nproc) # если использовали conan
+    cmake --build build/Release
+    cmake --build build/Release -j $(nproc)
     ```
 5. Запустить выполнение теста:
    ```sh
-   ctest --test-dir build/
-   ctest --test-dir build/Release # если использовали conan
+   ctest --test-dir build/Release
    ```
 
 ## Visual Studio
