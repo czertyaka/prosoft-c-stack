@@ -1,0 +1,38 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install conan
+      run: pip install "conan>=2.0"
+    - name: Install GoogleTest
+      run: |
+        conan profile detect --force
+        conan install . --build=missing
+    - name: Build
+      run: |
+        cmake --preset conan-release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DWITH_TEST=ON
+        cmake --build build/Release -j $(nproc)
+    - name: Install Cppcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends cppcheck
+    - name: Cppcheck
+      run: |
+        cppcheck \
+          --enable=all \
+          --error-exitcode=0 \
+          --file-filter="cstack.c" \
+          --project=./build/Release/compile_commands.json \
+          --suppress=checkersReport \
+          --suppress=missingIncludeSystem \
+          --template=gcc
+    - name: Test
+      run: ctest --test-dir build/Release --output-on-failure
