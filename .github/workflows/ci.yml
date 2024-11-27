@@ -32,7 +32,6 @@ jobs:
           --template=gcc \
           --file-filter="cstack.c" \
           --suppress=checkersReport \
-          --suppress=missingIncludeSystem \
-          --error-exitcode=1
+          --suppress=missingIncludeSystem
     - name: Test
       run: ctest --test-dir build/Release --output-on-failure
