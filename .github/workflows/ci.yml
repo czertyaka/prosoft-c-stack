@@ -20,12 +20,10 @@ jobs:
       run: |
         cmake --preset conan-release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DWITH_TEST=ON
         cmake --build build/Release -j $(nproc)
-    - name: Test
-      run: ctest --test-dir build/Release --output-on-failure
     - name: Install Cppcheck
       run: |
         sudo apt-get update
-        sudo apt-get install -y cppcheck
+        sudo apt-get install -y --no-install-recommends cppcheck cppcheck-htmlreport
     - name: Cppcheck
       run: |
         cppcheck \
@@ -36,3 +34,5 @@ jobs:
           --suppress=checkersReport \
           --suppress=missingIncludeSystem \
           --error-exitcode=1
+    - name: Test
+      run: ctest --test-dir build/Release --output-on-failure
