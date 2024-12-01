@@ -121,6 +121,8 @@ struct stack_entries_table g_table = {0u, NULL};
     ![Screenshot from 2023-11-19 21-10-28](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/c0c24f41-64cb-4c47-a883-63c150712a84)
     ![Screenshot from 2023-11-19 21-14-07](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/517553c2-a696-4644-ac25-c6ba39f6607c)
     ![image](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/b04466b9-858e-44ee-a08a-4d1f086bd0c3)
+    [Включите](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository)
+    GitHub Actions для вашего форка.
 5. Склонируйте репозиторий на ваш компьютер. Создайте ветку в вашем репозитории с названием, отличным от `master`.
 В командной строке Linux или GitBash на Windows это можно сделать следующим образом:
     ![Screenshot from 2023-11-19 21-19-17](https://github.com/czertyaka/prosoft-c-stack/assets/69390349/968f62e9-7b54-4a98-b937-26a92edec962)
