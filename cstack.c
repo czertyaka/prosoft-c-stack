@@ -182,7 +182,14 @@ unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int 
     }
 
     struct node* top_node = g_table.entries[stack].stack;
-    unsigned int copy_size = (size < top_node->size) ? size : top_node->size;
+    unsigned int copy_size;
+    if (size < top_node->size)
+    {
+        copy_size = size;
+    }else
+    {
+        copy_size = top_node->size;
+    }
 
     if (data_out != NULL) 
     {
