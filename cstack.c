@@ -18,8 +18,14 @@ typedef struct stack_list
 
 stack_list_ stack_list = {.size = 0, .capacity = 10, .stack = NULL};
 
-void stack_list_init() {
-    stack_list.stack = (item**)calloc(stack_list.capacity,sizeof(item*));
+static int is_initialized = 0;//за такое надо банить
+
+static void stack_list_init() {
+    if (!is_initialized){
+        stack_list.stack = (item**)calloc(stack_list.capacity,sizeof(item*));
+        is_initialized =1;
+    }
+    
 }
 
 hstack_t stack_new(void)
@@ -69,7 +75,7 @@ unsigned int stack_size(const hstack_t hstack)
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-    if (!data_in || size == 0 || !stack_valid_handler(hstack))
+    if (!data_in || size == 0 || !stack_valid_handler(hstack))//проверка входных данных и хендлер
         return;
     item* new_item = (item*)malloc(sizeof(item));
     if (!new_item) return;
