@@ -1,14 +1,15 @@
 #include "cstack.h"
 #include <stddef.h>
+#include <stdlib.h>
 
-typedef struct 
+typedef struct item
 {
     unsigned int size;
     char* data;
     struct item *prev;
 } item;
 
-typedef struct
+typedef struct stack_list
 {
     int size;
     int capacity;
@@ -25,7 +26,7 @@ hstack_t stack_new(void)
 {
     if (stack_list.size >= stack_list.capacity) {
         stack_list.capacity *= 2;
-        stack_list.stack = realloc(stack_list.stack, stack_list.capacity * sizeof(item*));
+        stack_list.stack = (item**)realloc(stack_list.stack, stack_list.capacity * sizeof(item*));
         if (!stack_list.stack) return -1;
     }
     stack_list.stack[stack_list.size] = NULL;
@@ -70,10 +71,10 @@ void stack_push(const hstack_t hstack, const void* data_in, const unsigned int s
 {
     if (!data_in || size == 0 || !stack_valid_handler(hstack))
         return;
-    item* new_item = malloc(sizeof(item));
+    item* new_item = (item*)malloc(sizeof(item));
     if (!new_item) return;
 
-    new_item->data = malloc(size);
+    new_item->data = (char*)malloc(size);
     if (!new_item->data) {
         free(new_item);
         return;
