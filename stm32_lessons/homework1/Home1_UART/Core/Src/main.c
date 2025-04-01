@@ -57,7 +57,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define UART_BUF_SIZE 30
+#define UART_BUF_SIZE 128
 
 uint8_t rxPos = 0;
 uint8_t rxBuf[UART_BUF_SIZE];
