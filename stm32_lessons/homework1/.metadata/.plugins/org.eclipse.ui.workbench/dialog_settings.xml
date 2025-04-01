@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="WorkbenchPreferenceDialog.dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="187"/>
-		<item key="DIALOG_Y_ORIGIN" value="-140"/>
-		<item key="DIALOG_WIDTH" value="769"/>
-		<item key="DIALOG_HEIGHT" value="709"/>
+		<item key="DIALOG_X_ORIGIN" value="758"/>
+		<item key="DIALOG_Y_ORIGIN" value="8"/>
+		<item key="DIALOG_WIDTH" value="1068"/>
+		<item key="DIALOG_HEIGHT" value="1040"/>
 		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|5|0|Segoe UI"/>
+	</section>
+	<section name="org.eclipse.ui.preferences.keysPreferencePage">
 	</section>
 </section>

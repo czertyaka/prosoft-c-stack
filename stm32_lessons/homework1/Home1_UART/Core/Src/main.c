@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +57,45 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define UART_BUF_SIZE 30
+
+uint8_t rxPos = 0;
+uint8_t rxBuf[UART_BUF_SIZE];
+uint8_t txBuf[UART_BUF_SIZE];
+const char* msgERR = "error invalid arguments\r\n";
+const char* msgOK  = "Ok\r\n";
+
+// Вкл и Выкл светодиодов
+void ledSwitch( uint8_t ledNum, uint8_t ledState )
+{
+	ledNum -= 1;
+
+	if( ledState == 0 ) { GPIOB->BSRR |= (0x1 << (ledNum * 7)) << 16; }
+
+	if( ledState == 1 ) { GPIOB->BSRR |= (0x1 << (ledNum * 7)); }
+}
+
+void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
+{
+	if( huart == &huart3 )
+	{
+		if( rxPos >= UART_BUF_SIZE ) { rxPos = 0; }
+
+		rxPos++;
+		if( ( rxPos > 0 ) && ( rxBuf[rxPos - 1] == '\r' ) )
+		{
+			HAL_UART_Receive_IT( &huart3, rxBuf, 1);
+		}
+		else
+		{
+			HAL_UART_Receive_IT( &huart3, rxBuf + rxPos, 1);
+		}
+	}
+}
+
+
+
+
 
 /* USER CODE END 0 */
 
@@ -93,13 +132,56 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT( &huart3, rxBuf, 1 );
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  /*
+		******************************************
+			Домашнее задание №1
+
+			Стурис Алексей
+		******************************************
+	  */
+	  if( ( rxPos > 0 ) && ( rxBuf[rxPos - 1] == '\r' ) )
+	  {
+		  uint8_t ledNum  = 0xFF; // 0xFF означает, что пришла некорректная команда
+		  uint8_t ledStat = 0; // 0 - светодиод выключить; 1 - светодиод включить
+
+		  if( (rxBuf[0] == 'o') && (rxBuf[1] == 'n') && (rxBuf[2] == ' ') )
+		  {
+			  if( ((rxBuf[3] == '0') || (rxBuf[3] == '1') || (rxBuf[3] == '2') || (rxBuf[3] == '3')) && (rxBuf[4] == '\r') )
+			  {
+				  ledStat = 1; // включить светодиод
+				  ledNum = rxBuf[3] - 48; // '0' = 48 в таблице ASCII
+			  }
+		  }
+		  else if( (rxBuf[0] == 'o') && (rxBuf[1] == 'f') && (rxBuf[2] == 'f') && (rxBuf[3] == ' ') )
+		  {
+			  if( ((rxBuf[4] == '0') || (rxBuf[4] == '1') || (rxBuf[4] == '2') || (rxBuf[4] == '3')) && (rxBuf[5] == '\r') )
+			  {
+				  ledStat = 0;  // выключить светодиод
+				  ledNum = rxBuf[4] - 48; // '0' = 48 в таблице ASCII
+			  }
+		  }
+		  // если не зашли в if, то ledNum = 0xFF;
+
+		  if( ledNum != 0xFF )
+		  {
+			  if( ledNum > 0 ) { ledSwitch( ledNum, ledStat); } // LD0 нет на плате
+			  HAL_UART_Transmit_IT( &huart3, (uint8_t*)msgOK,  strlen(msgOK));
+		  }
+		  else
+		  {
+			  HAL_UART_Transmit_IT( &huart3, (uint8_t*)msgERR, strlen(msgERR));
+		  }
+
+		  memset(rxBuf, 0, UART_BUF_SIZE);
+		  rxPos = 0;
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
