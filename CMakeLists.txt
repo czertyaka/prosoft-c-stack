@@ -5,7 +5,8 @@ enable_testing()
 option(WITH_TEST "Build test (GTest library required)" OFF)
 
 # build library
-add_library(cstack STATIC cstack.c)
+add_library(cstack STATIC cstack.c
+    cstack.h)
 
 # build test
 if (WITH_TEST)
