@@ -30,7 +30,7 @@ endif()
 # compiler-specific project settings
 if (MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    set(MSVC_FLAGS /Wall /WX)
+    set(MSVC_FLAGS /Wall /WX /wd4820 /wd5045)
     target_compile_options(cstack PRIVATE ${MSVC_FLAGS})
     target_link_options(cstack PRIVATE ${MSVC_FLAGS})
     if (WITH_TEST)
@@ -45,4 +45,3 @@ else()
         target_link_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
     endif()
 endif()
-
