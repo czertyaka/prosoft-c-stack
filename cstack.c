@@ -1,6 +1,6 @@
 #include "cstack.h"
 #include <stddef.h>
-...
+
 #define UNUSED(VAR) (void)(VAR)
 
 hstack_t stack_new(void)
