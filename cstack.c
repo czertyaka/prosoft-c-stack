@@ -2,41 +2,58 @@
 #include <stddef.h>
 
 #define UNUSED(VAR) (void)(VAR)
-// ffffff
+
 hstack_t stack_new(void)
 {
-    return -1 ;
+    return 0 ;
 }
 
 void stack_free(const hstack_t hstack)
 {
-    UNUSED(hstack);
+    if (stack_valid_handler(hstack) != 0) {
+        return;
+    }
 }
 
 int stack_valid_handler(const hstack_t hstack)
 {
-    UNUSED(hstack);
-    return 1;
+    return (hstack < 0) ? 1 : 0;
 }
 
 unsigned int stack_size(const hstack_t hstack)
 {
-    UNUSED(hstack);
+    
+    if (stack_valid_handler(hstack) != 0) {
+        return 0;
+    }
+    
     return 0;
 }
 
 void stack_push(const hstack_t hstack, const void* data_in, const unsigned int size)
 {
-    UNUSED(hstack);
-    UNUSED(data_in);
+    if (stack_valid_handler(hstack) != 0) {
+        return;
+    }
+    if (!data_in || size == 0u) {
+        return;
+    }
     UNUSED(size);
 }
 
 unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int size)
 {
-    UNUSED(hstack);
-    UNUSED(data_out);
-    UNUSED(size);
+    
+    if (stack_valid_handler(hstack) != 0) {
+        return 0;
+    }
+
+   
+    if (!data_out || size == 0u) {
+        return 0;
+    }
+
+    
     return 0;
 }
 
