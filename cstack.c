@@ -173,22 +173,18 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
     struct node* top_node = slot->stack;
     if (top_node == NULL)
         return 0;
-    // определяем сколько байт реально можно скопировать
-    unsigned int bytes_to_copy;
 
-    if (size < top_node->size)
-        bytes_to_copy = size;
-    else
-        bytes_to_copy = top_node->size;
+    if (size != top_node->size)
+        return 0;
 
     // Копируем данные из узла в буфер
-    memcpy(data_out, top_node->data, bytes_to_copy);
+    memcpy(data_out, top_node->data, size);
 
     slot->stack = (struct node*)top_node->prev;
 
     free(top_node);
 
-    return bytes_to_copy;
+    return size;
 
 }
 
