@@ -143,4 +143,3 @@ unsigned int stack_pop(const hstack_t hstack, void* data_out, const unsigned int
 
     return nbytes;   // возвращаем количество реально записанных байт
 }
-
