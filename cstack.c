@@ -1,4 +1,4 @@
-﻿#include "cstack.h"
+#include "cstack.h"
 #include <stddef.h>
 #include <stdlib.h>   // malloc, realloc, free
 #include <string.h>   // memcpy
@@ -56,7 +56,7 @@ hstack_t stack_new(void)
         realloc(g_table.entries, new_size * sizeof(stack_entry_t));
 
     if (!new_entries)
-        return -1; // ошибка → вернуть -1 (как требует ТЗ)
+        return -1; // ошибка,  вернуть -1
 
     g_table.entries = new_entries;
 
