@@ -1,12 +1,14 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-extern "C" {
+extern "C"
+{
 #include "cstack.h"
 }
 
 class AllAPITest : public ::testing::TestWithParam<hstack_t>
-{};
+{
+};
 
 TEST_P(AllAPITest, InvalidStackHandlers)
 {
@@ -128,9 +130,11 @@ TEST_F(ModifyTests, SeveralPushPop)
     }
     for (size_t i = 0; i < size; ++i)
     {
-        EXPECT_EQ(stack_pop(stack, &data_out[i], sizeof(data_out[i])), sizeof(data_out[i]));
+        EXPECT_EQ(
+            stack_pop(stack, &data_out[i], sizeof(data_out[i])),
+            sizeof(data_out[i])
+        );
         EXPECT_EQ(stack_size(stack), size - 1u - i);
     }
     EXPECT_THAT(data_out, ::testing::ElementsAre(2, 1, 0));
 }
-
