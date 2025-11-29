@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.22)
 project(cstack)
 enable_testing()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(WITH_TEST "Build test (GTest library required)" OFF)
 
 # build library
@@ -41,7 +43,7 @@ else()
     target_compile_options(cstack PRIVATE -Wall -Wextra -Wformat -Wformat-security -Werror)
     set(SANITIZERS_FLAGS -fsanitize=undefined -fsanitize=address)
     if (WITH_TEST)
-        target_compile_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
+        target_compile_options(cstack_test PRIVATE ${SANITIZERS_FLAGS} -g3 -O0)
         target_link_options(cstack_test PRIVATE ${SANITIZERS_FLAGS})
     endif()
 endif()
