@@ -1,5 +1,4 @@
 # prosoft-c-stack
-Class project for C-language lessons, Prosoft Developer School 2022
 
 ## Краткое описание
 
