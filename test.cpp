@@ -5,17 +5,27 @@ extern "C" {
 #include "cstack.h"
 }
 
-TEST(AllAPITest, BadStackHandler)
+class AllAPITest : public ::testing::TestWithParam<hstack_t>
+{};
+
+TEST_P(AllAPITest, InvalidStackHandlers)
 {
-    stack_free(-1);
-    EXPECT_EQ(stack_valid_handler(-1), 1);
-    EXPECT_EQ(stack_size(-1), 0u);
+    const auto handler = GetParam();
+    stack_free(handler);
+    EXPECT_EQ(stack_valid_handler(handler), 1);
+    EXPECT_EQ(stack_size(handler), 0u);
     const int data_in = 1;
-    stack_push(-1, &data_in, sizeof(data_in));
+    stack_push(handler, &data_in, sizeof(data_in));
     int data_out = 0;
-    EXPECT_EQ(stack_pop(-1, &data_out, sizeof(data_out)), 0u);
+    EXPECT_EQ(stack_pop(handler, &data_out, sizeof(data_out)), 0u);
     EXPECT_EQ(data_out, 0);
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    InvalidHandlers,
+    AllAPITest,
+    ::testing::Values(-1000, -100, -10, -1, 0, 1, 10, 100, 1000)
+);
 
 TEST(AllocationTests, SingleAllocation)
 {
